@@ -140,8 +140,8 @@ app.get('/', async (req, res) => {
   res.send('ffff')
 })
 app.post('/create-user', async (req, res) => {
-    const { name, mobile, unique_code } = req.body;
- 
+    const { name,id, mobile, unique_code } = req.body;
+     
     // Validate input
     if (!name || !mobile || !unique_code) {
         return res.status(400).json({ message: 'All fields are required!' });
@@ -153,6 +153,13 @@ app.post('/create-user', async (req, res) => {
 
     try {
         // Check if mobile or unique_code already exists
+
+        if(id){
+          const existingUser = await User.findByIdAndUpdate(id,{...req.body });
+      return    res.status(201).json({ message: 'User updated successfully!',   });
+        }
+
+
         const existingUser = await User.findOne({ $or: [{ mobile }, { unique_code }] });
         if (existingUser) {
             return res.status(400).json({ message: 'Mobile number or unique code already exists!' });
@@ -163,6 +170,34 @@ app.post('/create-user', async (req, res) => {
         await newUser.save();
 
         res.status(201).json({ message: 'User created successfully!', user: newUser });
+    } catch (error) {
+        console.error('Error creating user:', error);
+        res.status(500).json({ message: 'Internal server error!' });
+    }
+});
+app.post('/view-user', async (req, res) => {
+    const { id} = req.body;
+     
+    // Validate input
+    
+
+   
+
+    try {
+        // Check if mobile or unique_code already exists
+
+        if(id){
+          const existingUser = await User.findById(id);
+         return res.status(201).json({ message: 'User created successfully!', user: existingUser });
+        }
+
+
+          return res.status(400).json({ message: 'Mobile number or unique code already exists!' });
+        
+
+      
+
+    
     } catch (error) {
         console.error('Error creating user:', error);
         res.status(500).json({ message: 'Internal server error!' });
