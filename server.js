@@ -217,7 +217,7 @@ app.get('/users', async (req, res) => {
       startOfLast7Days.setDate(startOfLast7Days.getDate() - 7);
 
       // Fetch all leads created in the last 7 days
-      const leads = await Lead.find({
+      const leads = await proposal.find({
           createdAt: { $gte: startOfLast7Days },
       }) ;
 
@@ -238,7 +238,7 @@ app.get('/users', async (req, res) => {
               mobile: user.mobile,
               unique_code: user.unique_code,
               block: user.block,
-              proposalList: proposalList, // Ensure proposalList is always an array
+proposalList: proposalList, // Ensure proposalList is always an array
               proposals: {
                   today: todayLeads.length,
                   yesterday: yesterdayLeads.length,
@@ -266,6 +266,23 @@ app.put('/users/:id/block', async (req, res) => {
       }
 
       res.json({ message: `User ${block ? 'blocked' : 'unblocked'} successfully!`, user });
+  } catch (error) {
+      console.error('Error updating user block status:', error);
+      res.status(500).json({ message: 'Error updating user block status', error });
+  }
+});
+app.put('/users/:id/delete', async (req, res) => {
+  try {
+      const { id } = req.params;
+       
+
+      const user = await User.findByIdAndDelete(id,  { new: true });
+
+      if (!user) {
+          return res.status(404).json({ message: 'User not found!' });
+      }
+
+      res.json({ message: `User Deleted successfully!`, user });
   } catch (error) {
       console.error('Error updating user block status:', error);
       res.status(500).json({ message: 'Error updating user block status', error });
@@ -504,6 +521,20 @@ app.get('/usersFromManager/:id', async (req, res) => {
     res.status(500).json({ message: 'Error retrieving leads', error });
   }
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 app.get('/proposals', async (req, res) => {
   try {
     const leads = await proposal.find().sort({ createdAt:  -1 });
