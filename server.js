@@ -1040,8 +1040,8 @@ const sendProposalMail = async (user) => {
       </ul>
 
       <h3 style="color: #1E88E5;">Franchise Opportunities & Earnings</h3>
-      <p><strong>Delivery Franchise:</strong> ₹30 per product (100 products daily commitment)</p>
-      <p><strong>District Franchise:</strong> ₹20 per product (1,000 products daily commitment)</p>
+      <p><strong>Delivery Franchise:</strong> ₹30 per Shipment (300 products daily commitment)</p>
+       
       <p><strong>Profit Margin:</strong> 25-30%</p>
       <p><strong>Annual Profit Potential:</strong> ₹10-15 lakh per annum</p>
 
@@ -1172,8 +1172,8 @@ const sendProposalMailFromUser = async (user, manager) => {
       </ul> </div>`)}
 
         <h3 style="color: #1E88E5;">Franchise Opportunities & Earnings</h3>
-        <p><strong>Delivery Franchise:</strong> ₹30 per product (100 products daily commitment)</p>
-        <p><strong>District Franchise:</strong> ₹20 per product (1,000 products daily commitment)</p>
+        <p><strong>Delivery Franchise:</strong> ₹30 per Shipment (300 products daily commitment)</p>
+        
         <p><strong>Profit Margin:</strong> 25-30%</p>
         <p><strong>Annual Profit Potential:</strong> ₹10-15 lakh per annum</p>
 
@@ -1198,7 +1198,7 @@ const sendProposalMailFromUser = async (user, manager) => {
         </ul>
 
         <h3 style="color: #1E88E5;">Investment & Financial Information</h3>
-        <p><strong>Registration Fee:</strong> ₹ ${user.pincodes.length * 18600} </p>
+        <p><strong>Registration Fee:</strong> ₹18600 </p>
         <p><strong>Security Money:</strong> 90% refundable after the agreement</p>
         <p><strong>Interest Earned on Security Deposit:</strong> 7.5% annually</p>
         <p><strong>Interest Calculation Example:</strong> ₹2,00,000 × 7.5% × 1 year = ₹15,000 per annum</p>
