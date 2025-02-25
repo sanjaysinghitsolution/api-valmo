@@ -26,7 +26,7 @@ function generateUniqueValue() {
 app.use('/uploads', express.static('uploads'));
 // Connect to MongoDB
 mongoose.connect("mongodb+srv://valmologestic:sanjay9523@cluster0.tb1f0.mongodb.net/valmoDB?retryWrites=true&w=majority&appName=Cluster0", {
-})  
+})
   .then(() => console.log("MongoDB connected"))
   .catch(err => console.log(err));
 // Define Schema and Model
@@ -37,7 +37,7 @@ const LeadSchema = new mongoose.Schema({
   pincode: String,
   state: String,
   district: String,
-  selectedPostOfficeList:Array,
+  selectedPostOfficeList: Array,
   approval_fees: String,
   agreementFees: String,
   securityMoney: String,
@@ -52,12 +52,12 @@ const LeadSchema = new mongoose.Schema({
   ifsc: String,
   branch: String,
   holder_name: String,
-  bank_name:String,
+  bank_name: String,
   block: {
     type: Boolean,
     default: false
   }
-},{
+}, {
   timestamps: true
 });
 const Lead = mongoose.model('Lead', LeadSchema);
@@ -74,218 +74,218 @@ const proposalSchema = new mongoose.Schema({
   name: String,
   email: String,
   mobile: String,
-  pincode: String,
+  pincodes: Array,
   state: String,
   district: String,
-  post_offices:Array,
-},{
+  post_offices: Array,
+}, {
   timestamps: true
 });
 const proposal = mongoose.model('proposal', proposalSchema);
 const bankSchema = new mongoose.Schema({
-bank_name: String,
+  bank_name: String,
   account_number: String,
   ifsc: String,
   branch: String,
   holder_name: String,
 
-},{
+}, {
   timestamps: true
 });
 const bank = mongoose.model('bank', bankSchema);
 const FranchiseSchema = new mongoose.Schema({
-    full_name: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    email: {
-        type: String,
-        required: true,
-        trim: true,
-        lowercase: true
-    },
-    contact_number: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    pin_code: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    city: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    Franchise_type: {
-        type: String,
-        enum: ["Delivery Franchise", "District Franchise Hub"], // Allowed values
-        default: "Delivery Franchise"
-    },
-    state: {
-        type: String,
-        default: "SelectState"
-    },
-    district: {
-        type: String,
-        required: true,
-        trim: true
-    }
+  full_name: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  email: {
+    type: String,
+    required: true,
+    trim: true,
+    lowercase: true
+  },
+  contact_number: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  pin_code: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  city: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  Franchise_type: {
+    type: String,
+    enum: ["Delivery Franchise", "District Franchise Hub"], // Allowed values
+    default: "Delivery Franchise"
+  },
+  state: {
+    type: String,
+    default: "SelectState"
+  },
+  district: {
+    type: String,
+    required: true,
+    trim: true
+  }
 }, { timestamps: true }); // Adds createdAt & updatedAt
 const Franchise = mongoose.model("Franchise", FranchiseSchema);
 app.get('/', async (req, res) => {
   res.send('ffff')
 })
 app.post('/create-user', async (req, res) => {
-    const { name,id, mobile, unique_code } = req.body;
-     
-    // Validate input
-    if (!name || !mobile || !unique_code) {
-        return res.status(400).json({ message: 'All fields are required!' });
+  const { name, id, mobile, unique_code } = req.body;
+
+  // Validate input
+  if (!name || !mobile || !unique_code) {
+    return res.status(400).json({ message: 'All fields are required!' });
+  }
+
+  if (unique_code.length !== 4 || isNaN(unique_code)) {
+    return res.status(400).json({ message: 'Unique code must be a 4-digit number!' });
+  }
+
+  try {
+    // Check if mobile or unique_code already exists
+
+    if (id) {
+      const existingUser = await User.findByIdAndUpdate(id, { ...req.body });
+      return res.status(201).json({ message: 'User updated successfully!', });
     }
 
-    if (unique_code.length !== 4 || isNaN(unique_code)) {
-        return res.status(400).json({ message: 'Unique code must be a 4-digit number!' });
+
+    const existingUser = await User.findOne({ $or: [{ mobile }, { unique_code }] });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Mobile number or unique code already exists!' });
     }
 
-    try {
-        // Check if mobile or unique_code already exists
+    // Create new user
+    const newUser = new User({ name, mobile, unique_code });
+    await newUser.save();
 
-        if(id){
-          const existingUser = await User.findByIdAndUpdate(id,{...req.body });
-      return    res.status(201).json({ message: 'User updated successfully!',   });
-        }
-
-
-        const existingUser = await User.findOne({ $or: [{ mobile }, { unique_code }] });
-        if (existingUser) {
-            return res.status(400).json({ message: 'Mobile number or unique code already exists!' });
-        }
-
-        // Create new user
-        const newUser = new User({ name, mobile, unique_code });
-        await newUser.save();
-
-        res.status(201).json({ message: 'User created successfully!', user: newUser });
-    } catch (error) {
-        console.error('Error creating user:', error);
-        res.status(500).json({ message: 'Internal server error!' });
-    }
+    res.status(201).json({ message: 'User created successfully!', user: newUser });
+  } catch (error) {
+    console.error('Error creating user:', error);
+    res.status(500).json({ message: 'Internal server error!' });
+  }
 });
 app.post('/view-user', async (req, res) => {
-    const { id} = req.body;
-     
-    // Validate input
-    
+  const { id } = req.body;
 
-   
-
-    try {
-        // Check if mobile or unique_code already exists
-
-        if(id){
-          const existingUser = await User.findById(id);
-         return res.status(201).json({ message: 'User created successfully!', user: existingUser });
-        }
+  // Validate input
 
 
-          return res.status(400).json({ message: 'Mobile number or unique code already exists!' });
-        
 
-      
 
-    
-    } catch (error) {
-        console.error('Error creating user:', error);
-        res.status(500).json({ message: 'Internal server error!' });
+  try {
+    // Check if mobile or unique_code already exists
+
+    if (id) {
+      const existingUser = await User.findById(id);
+      return res.status(201).json({ message: 'User created successfully!', user: existingUser });
     }
+
+
+    return res.status(400).json({ message: 'Mobile number or unique code already exists!' });
+
+
+
+
+
+  } catch (error) {
+    console.error('Error creating user:', error);
+    res.status(500).json({ message: 'Internal server error!' });
+  }
 });
 app.get('/users', async (req, res) => {
   try {
-      // Fetch all users
-      const users = await User.find({}) 
+    // Fetch all users
+    const users = await User.find({})
 
-      // Get the current date and calculate dates for today, yesterday, and last 7 days
-      const currentDate = new Date();
-      const startOfToday = new Date(currentDate.setHours(0, 0, 0, 0));
-      const startOfYesterday = new Date(startOfToday);
-      startOfYesterday.setDate(startOfYesterday.getDate() - 1);
-      const startOfLast7Days = new Date(startOfToday);
-      startOfLast7Days.setDate(startOfLast7Days.getDate() - 7);
+    // Get the current date and calculate dates for today, yesterday, and last 7 days
+    const currentDate = new Date();
+    const startOfToday = new Date(currentDate.setHours(0, 0, 0, 0));
+    const startOfYesterday = new Date(startOfToday);
+    startOfYesterday.setDate(startOfYesterday.getDate() - 1);
+    const startOfLast7Days = new Date(startOfToday);
+    startOfLast7Days.setDate(startOfLast7Days.getDate() - 7);
 
-      // Fetch all leads created in the last 7 days
-      const leads = await proposal.find({
-          createdAt: { $gte: startOfLast7Days },
-      }) ;
+    // Fetch all leads created in the last 7 days
+    const leads = await proposal.find({
+      createdAt: { $gte: startOfLast7Days },
+    });
 
-      // Map users with their proposal statistics
-      const usersWithStats = users.map(user => {
-          // Ensure proposalList is always an array
-          const proposalList = user.proposalList || [];
+    // Map users with their proposal statistics
+    const usersWithStats = users.map(user => {
+      // Ensure proposalList is always an array
+      const proposalList = user.proposalList || [];
 
-          const userLeads = leads.filter(lead => proposalList.includes(lead._id));
+      const userLeads = leads.filter(lead => proposalList.includes(lead._id));
 
-          const todayLeads = userLeads.filter(lead => lead.createdAt >= startOfToday);
-          const yesterdayLeads = userLeads.filter(lead => lead.createdAt >= startOfYesterday && lead.createdAt < startOfToday);
-          const last7DaysLeads = userLeads.filter(lead => lead.createdAt >= startOfLast7Days);
+      const todayLeads = userLeads.filter(lead => lead.createdAt >= startOfToday);
+      const yesterdayLeads = userLeads.filter(lead => lead.createdAt >= startOfYesterday && lead.createdAt < startOfToday);
+      const last7DaysLeads = userLeads.filter(lead => lead.createdAt >= startOfLast7Days);
 
-          return {
-              _id: user._id,
-              name: user.name,
-              mobile: user.mobile,
-              unique_code: user.unique_code,
-              block: user.block,
-proposalList: proposalList, // Ensure proposalList is always an array
-              proposals: {
-                  today: todayLeads.length,
-                  yesterday: yesterdayLeads.length,
-                  last7Days: last7DaysLeads.length,
-              },
-          };
-      });
+      return {
+        _id: user._id,
+        name: user.name,
+        mobile: user.mobile,
+        unique_code: user.unique_code,
+        block: user.block,
+        proposalList: proposalList, // Ensure proposalList is always an array
+        proposals: {
+          today: todayLeads.length,
+          yesterday: yesterdayLeads.length,
+          last7Days: last7DaysLeads.length,
+        },
+      };
+    });
 
-      res.json(usersWithStats);
+    res.json(usersWithStats);
   } catch (error) {
-      console.error('Error fetching users:', error);
-      res.status(500).json({ message: 'Error fetching users', error });
+    console.error('Error fetching users:', error);
+    res.status(500).json({ message: 'Error fetching users', error });
   }
 });
 // Endpoint to block/unblock a user
 app.put('/users/:id/block', async (req, res) => {
   try {
-      const { id } = req.params;
-      const { block } = req.body;
+    const { id } = req.params;
+    const { block } = req.body;
 
-      const user = await User.findByIdAndUpdate(id, { block }, { new: true });
+    const user = await User.findByIdAndUpdate(id, { block }, { new: true });
 
-      if (!user) {
-          return res.status(404).json({ message: 'User not found!' });
-      }
+    if (!user) {
+      return res.status(404).json({ message: 'User not found!' });
+    }
 
-      res.json({ message: `User ${block ? 'blocked' : 'unblocked'} successfully!`, user });
+    res.json({ message: `User ${block ? 'blocked' : 'unblocked'} successfully!`, user });
   } catch (error) {
-      console.error('Error updating user block status:', error);
-      res.status(500).json({ message: 'Error updating user block status', error });
+    console.error('Error updating user block status:', error);
+    res.status(500).json({ message: 'Error updating user block status', error });
   }
 });
 app.put('/users/:id/delete', async (req, res) => {
   try {
-      const { id } = req.params;
-       
+    const { id } = req.params;
 
-      const user = await User.findByIdAndDelete(id,  { new: true });
 
-      if (!user) {
-          return res.status(404).json({ message: 'User not found!' });
-      }
+    const user = await User.findByIdAndDelete(id, { new: true });
 
-      res.json({ message: `User Deleted successfully!`, user });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found!' });
+    }
+
+    res.json({ message: `User Deleted successfully!`, user });
   } catch (error) {
-      console.error('Error updating user block status:', error);
-      res.status(500).json({ message: 'Error updating user block status', error });
+    console.error('Error updating user block status:', error);
+    res.status(500).json({ message: 'Error updating user block status', error });
   }
 });
 // Create Lead Route
@@ -296,7 +296,7 @@ app.post('/create-lead', upload.fields([
 
   try {
 
-  
+
 
     if (req.body.id) {
       const lead = await Lead.findByIdAndUpdate(req.body.id, {
@@ -347,7 +347,7 @@ app.post('/create-lead', upload.fields([
       address: req.body.address,
       photo: req.files['photo'] ? req.files['photo'][0].path : null,
       aadhar: req.body.aadhar,
-      pan: req.body.pan, 
+      pan: req.body.pan,
       account_number: req.body.account_number,
       account_number: req.body.account_number,
       ifsc: req.body.ifsc,
@@ -355,7 +355,7 @@ app.post('/create-lead', upload.fields([
       holder_name: req.body.holder_name,
       bank_name: req.body.bank_name
     });
-    
+
     // Save the new lead
     const savedLead = await newLead.save();
 
@@ -372,9 +372,9 @@ app.post('/create-lead-By-Manager', upload.fields([
 
   try {
 
-let user
+    let user
     if (req.body.managerid) {
-        user = await User.findOne({unique_code: req.body.managerid})
+      user = await User.findOne({ unique_code: req.body.managerid })
     }
     if (req.body.id) {
       const lead = await Lead.findByIdAndUpdate(req.body.id, {
@@ -433,10 +433,10 @@ let user
       holder_name: req.body.holder_name,
       bank_name: req.body.bank_name
     });
-    
+
     // Save the new lead
     const savedLead = await newLead.save();
-     user.leadList.push(savedLead._id);
+    user.leadList.push(savedLead._id);
     await user.save();
     res.json({ message: 'Lead created and assigned successfully!', lead: savedLead });
   } catch (error) {
@@ -445,10 +445,10 @@ let user
   }
 });
 app.post('/franchise', async (req, res) => {
- console.log(req.body)
+  console.log(req.body)
   try {
-   
-    const newLead = new Franchise( req.body);
+
+    const newLead = new Franchise(req.body);
 
     await newLead.save();
     res.json({ message: 'Lead created successfully!' });
@@ -464,13 +464,13 @@ app.post('/create-bank', async (req, res) => {
     // Find the bank by account_number and update or create a new document
     const updatedBank = await bank.findOneAndUpdate(
       { account_number }, // Find by account_number
-      { 
-        ifsc, 
-        branch, 
-        bank_name, 
-        holder_name 
+      {
+        ifsc,
+        branch,
+        bank_name,
+        holder_name
       },
-      { 
+      {
         new: true, // Return the updated document
         upsert: true, // Create a new document if none is found
       }
@@ -483,7 +483,7 @@ app.post('/create-bank', async (req, res) => {
 });
 app.get('/usersList', async (req, res) => {
   try {
-    const leads = await Lead.find().sort({ createdAt:  -1 });
+    const leads = await Lead.find().sort({ createdAt: -1 });
     res.json(leads);
   } catch (error) {
     res.status(500).json({ message: 'Error retrieving leads', error });
@@ -491,10 +491,10 @@ app.get('/usersList', async (req, res) => {
 })
 app.get('/usersList/:id', async (req, res) => {
   try {
-    const user= await User.findOne({unique_code:req.params.id})
-    const leads = await Lead.find({_id:{$in:user.leadList}}).sort({ createdAt:  -1 });
+    const user = await User.findOne({ unique_code: req.params.id })
+    const leads = await Lead.find({ _id: { $in: user.leadList } }).sort({ createdAt: -1 });
     res.json(leads);
-     
+
   } catch (error) {
     res.status(500).json({ message: 'Error retrieving leads', error });
   }
@@ -502,7 +502,7 @@ app.get('/usersList/:id', async (req, res) => {
 app.get('/usersFromManager/:id', async (req, res) => {
   try {
     const { id } = req.params;
-   
+
     // Find the user by unique_code
     const user = await User.findOne({ unique_code: id });
 
@@ -515,7 +515,7 @@ app.get('/usersFromManager/:id', async (req, res) => {
     const leads = await proposal.find({ _id: { $in: user.proposalList } });
 
     // Return the fetched leads
-    res.json({leads,user});
+    res.json({ leads, user });
   } catch (error) {
     console.error('Error retrieving leads:', error);
     res.status(500).json({ message: 'Error retrieving leads', error });
@@ -537,7 +537,7 @@ app.get('/usersFromManager/:id', async (req, res) => {
 
 app.get('/proposals', async (req, res) => {
   try {
-    const leads = await proposal.find().sort({ createdAt:  -1 });
+    const leads = await proposal.find().sort({ createdAt: -1 });
     res.json(leads);
   } catch (error) {
     res.status(500).json({ message: 'Error retrieving leads', error });
@@ -547,11 +547,11 @@ app.get('/getfranch', async (req, res) => {
   try {
     // Assuming `created_at` is the field that stores the timestamp of insertion
     const lastBank = await Franchise.find().sort({ created_at: 1 });
-    
+
     if (!lastBank) {
       return res.status(404).json({ message: 'No banks found' });
     }
-    
+
     res.json(lastBank);
   } catch (error) {
     res.status(500).json({ message: 'Error retrieving last added bank', error });
@@ -561,11 +561,11 @@ app.get('/bank', async (req, res) => {
   try {
     // Assuming `created_at` is the field that stores the timestamp of insertion
     const lastBank = await bank.findOne().sort({ created_at: 1 });
-    
+
     if (!lastBank) {
       return res.status(404).json({ message: 'No banks found' });
     }
-    
+
     res.json(lastBank);
   } catch (error) {
     res.status(500).json({ message: 'Error retrieving last added bank', error });
@@ -574,7 +574,7 @@ app.get('/bank', async (req, res) => {
 // Fetch User by ID
 app.get('/user/:id', async (req, res) => {
   try {
-     
+
     const user = await Lead.findById(req.params.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
@@ -629,38 +629,38 @@ app.delete('/proposals/:id', async (req, res) => {
   }
 });
 app.get('/user/step1WelcomeMAil/:id', async (req, res) => {
- 
+
   try {
     const user = await Lead.findById(req.params.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
     await sendMail(user);
     res.json(user);
   } catch (error) {
-      
+
     res.status(500).json({ message: 'Error fetching user data', error });
   }
 });
 app.get('/user/step1WelcomeMAil/:id', async (req, res) => {
- 
+
   try {
     const user = await Lead.findById(req.params.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
     await send2Mail(user);
     res.json(user);
   } catch (error) {
-      
+
     res.status(500).json({ message: 'Error fetching user data', error });
   }
 });
 app.get('/user/login/:doc/:mobile', async (req, res) => {
- console.log(req.params)
+  console.log(req.params)
   try {
     const user = await Lead.findOne({ documentNumber: req.params.doc, mobile: req.params.mobile });
     if (!user) return res.status(404).json({ message: 'User not found' });
-    
+
     res.json(user);
   } catch (error) {
-   
+
     res.status(500).json({ message: 'Error fetching user data', error });
   }
 });
@@ -668,55 +668,55 @@ app.post("/userm/login", async (req, res) => {
   const { unique_code } = req.body;
 
   if (!unique_code) {
-      return res.status(400).json({ message: "Unique code is required" });
+    return res.status(400).json({ message: "Unique code is required" });
   }
 
   // Check if the user exists in the database
   const user = await User.findOne({ unique_code });
 
   if (!user) {
-      return res.status(400).json({ message: "User not found" });
+    return res.status(400).json({ message: "User not found" });
   }
 
   return res.status(200).json({ message: "Login successful", role: "user" });
 });
 app.post('/create-proposal', async (req, res) => {
   try {
-//  console.log(req.body)
- const newLead = new proposal(req.body);
+    //  console.log(req.body)
+    const newLead = new proposal(req.body);
     await newLead.save();
     await sendProposalMail(req.body);
-    
-    res.json( { message: 'New Proposal created successfully!'});
+
+    res.json({ message: 'New Proposal created successfully!' });
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: 'Error fetching user data', error });
-  } 
+  }
 });
 app.post('/create-proposal/:id', async (req, res) => {
   try {
     const userDetails = await User.findOne({ unique_code: req.params.id });
-    console.log(req.body)
-//  console.log(req.body)
- const newLead = new proposal(req.body);
-   const latestLead= await newLead.save();
-   userDetails.proposalList.push(latestLead._id);
-   await userDetails.save();
+     
+    //  console.log(req.body)
+    const newLead = new proposal(req.body);
+    const latestLead = await newLead.save();
+    userDetails.proposalList.push(latestLead._id);
+    await userDetails.save();
     await sendProposalMailFromUser(req.body, userDetails);
-    
-    res.json( { message: 'New Proposal created successfully!'});
+
+    res.json({ message: 'New Proposal created successfully!' });
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: 'Error fetching user data', error });
-  } 
+  }
 });
 app.post('/user/contactus', async (req, res) => {
   try {
- 
+
     await sendMailToEmail(req.body);
-    res.json( { message: 'Create proposal'});
+    res.json({ message: 'Create proposal' });
   } catch (error) {
-   
+
     res.status(500).json({ message: 'Error fetching user data', error });
   }
 });
@@ -794,12 +794,12 @@ const sendMailToEmail = async (user) => {
 //                   <h3>Application Details</h3>
 //                   <p><strong>Application No.:</strong> ${user.applicationNumber}</p>
 //                   <p><strong>Application Status:</strong> Approved</p>
-                  
+
 //  <ul><strong>Allocated Location:</strong> 
 //         ${
 //           user.selectedPostOfficeList.map((post_office) => `<li>${post_office}</li>`)
 //         }
-          
+
 //         </ul>
 //                   <h3>Recipient Details</h3>
 //                   <p><strong>Name:</strong> ${user.username}</p>
@@ -811,10 +811,10 @@ const sendMailToEmail = async (user) => {
 //                   <p><strong>Login ID/Document No.:</strong> ${user.documentNumber}</p>
 //                   <p><strong>Password:</strong> ${user.mobile}</p>
 
-                
+
 //                   <p>Login : <a href="https://www.valmodelivery.com/status.html" style="color: blue;">https://www.valmodelivery.com/status.html</a></p>
 
-                
+
 
 
 //  <p>Best regards,<br>
@@ -934,7 +934,7 @@ const sendMail = async (user) => {
 
 
 const send2Mail = async (user) => {
-  
+
   const transporter = nodemailer.createTransport({
     host: "mail.valmodelivery.com",
     port: 465, // Secure SSL/TLS SMTP Port
@@ -976,9 +976,8 @@ const send2Mail = async (user) => {
                   <p><strong>Application Status:</strong> Approved</p>
                   
  <ul><strong>Allocated Location:</strong> 
-        ${
-          user.selectedPostOfficeList.map((post_office) => `<li>${post_office}</li>`)
-        }
+        ${user.selectedPostOfficeList.map((post_office) => `<li>${post_office}</li>`)
+      }
           
         </ul>
                   <h3>Recipient Details</h3>
@@ -1119,7 +1118,7 @@ const sendProposalMail = async (user) => {
       </p>
     </div>
   `,
-  
+
     attachments: [
       {
         filename: "Valmo Application Form.pdf",
@@ -1165,12 +1164,12 @@ const sendProposalMailFromUser = async (user, manager) => {
           <li>6,000+ PIN codes served</li>
         </ul>
 
-        <h3 style="color: #1E88E5;">Preferred Location & PIN Code Availability:</h3>
-        <p><strong>PIN Code Availability:</strong> ${user.pincode}</p>
-        <p><strong>Location Availability:</strong></p>
-        <ul>
-          ${user.post_offices.map((post_office) => `<li>${post_office}</li>`).join("")}
-        </ul>
+        ${user.pincodes.map((details,idx)  =>` <div> <h3 style="color: #1E88E5;">Preferred Location & PIN Code Availability ${idx+1} :</h3>
+      <p><strong>PIN Code Availability:</strong> ${details.pincode}</p>
+      <p><strong>Location Availability:</strong></p>
+      <ul>
+        ${details.post_offices.map((post_office) => `<li>${post_office}</li>`).join("")}
+      </ul> </div>`)}
 
         <h3 style="color: #1E88E5;">Franchise Opportunities & Earnings</h3>
         <p><strong>Delivery Franchise:</strong> ₹30 per product (100 products daily commitment)</p>
@@ -1199,7 +1198,7 @@ const sendProposalMailFromUser = async (user, manager) => {
         </ul>
 
         <h3 style="color: #1E88E5;">Investment & Financial Information</h3>
-        <p><strong>Registration Fee:</strong> ₹18,600</p>
+        <p><strong>Registration Fee:</strong> ₹ ${user.pincodes.length * 18600} </p>
         <p><strong>Security Money:</strong> 90% refundable after the agreement</p>
         <p><strong>Interest Earned on Security Deposit:</strong> 7.5% annually</p>
         <p><strong>Interest Calculation Example:</strong> ₹2,00,000 × 7.5% × 1 year = ₹15,000 per annum</p>
@@ -1279,7 +1278,7 @@ app.post("/admin/login", async (req, res) => {
   return res.status(400).json({ message: "Admin not found" });
 });
 // Start Server
-const PORT =process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
