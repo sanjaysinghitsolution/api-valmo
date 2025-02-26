@@ -74,6 +74,7 @@ const proposalSchema = new mongoose.Schema({
   name: String,
   email: String,
   mobile: String,
+  selectedRange:String,
   pincodes: Array,
   state: String,
   district: String,
@@ -457,6 +458,19 @@ app.post('/franchise', async (req, res) => {
     res.status(500).json({ message: 'Error creating lead', error });
   }
 });
+app.post('/franchise', async (req, res) => {
+ 
+  try {
+
+    const newLead = new Franchise(req.body);
+
+    await newLead.save();
+    res.json({ message: 'Lead created successfully!' });
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Error creating lead', error });
+  }
+});
 app.post('/create-bank', async (req, res) => {
   try {
     const { account_number, ifsc, branch, bank_name, holder_name } = req.body;
@@ -710,6 +724,41 @@ app.post('/create-proposal/:id', async (req, res) => {
     res.status(500).json({ message: 'Error fetching user data', error });
   }
 });
+let lastAssignedUserIndex = 0; // Global variable to keep track of last assigned user
+
+app.post('/create-proposal-by-web', async (req, res) => {
+  try {
+    // Fetch all unblocked users
+    const unblockedUsers = await User.find({ block: false });
+
+    if (unblockedUsers.length === 0) {
+      return res.status(400).json({ message: 'No unblocked users available' });
+    }
+
+    // Round-robin distribution
+    const assignedUser = unblockedUsers[lastAssignedUserIndex];
+    
+    // Update the index for the next lead
+    lastAssignedUserIndex = (lastAssignedUserIndex + 1) % unblockedUsers.length;
+
+    // Create a new proposal
+    const newLead = new proposal(req.body);
+    const latestLead = await newLead.save();
+
+    // Assign the proposal to the selected user
+    assignedUser.proposalList.push(latestLead._id);
+    await assignedUser.save();
+
+    // Send email notification
+    await sendProposalMailFromUser(req.body, assignedUser);
+
+    res.json({ message: 'New Proposal created successfully!',whatsappNumer:assignedUser.mobile });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'Error creating proposal', error });
+  }
+});
+
 app.post('/user/contactus', async (req, res) => {
   try {
 
