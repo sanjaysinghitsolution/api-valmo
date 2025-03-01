@@ -46,6 +46,7 @@ const LeadSchema = new mongoose.Schema({
   photo: String,
   aadhar: String,
   pan: String,
+  pincodes:Array,
   applicationNumber: String,
   documentNumber: String,
   account_number: String,
@@ -282,7 +283,7 @@ app.put('/users/:id/delete', async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found!' });
     }
-
+ 
     res.json({ message: `User Deleted successfully!`, user });
   } catch (error) {
     console.error('Error updating user block status:', error);
@@ -297,7 +298,7 @@ app.post('/create-lead', upload.fields([
 
   try {
 
-
+ console.log(req.body)
 
     if (req.body.id) {
       const lead = await Lead.findByIdAndUpdate(req.body.id, {
@@ -315,7 +316,8 @@ app.post('/create-lead', upload.fields([
         securityMoney: req.body.securityMoney,
         father_name: req.body.father_name,
         address: req.body.address,
-        // photo: req.files['photo'][0].path,
+       // photo: req?.files['photo'][0]?.path,
+        pincodes: req.body.pincodes? JSON.parse(req.body.pincodes):[],
         aadhar: req.body.aadhar,
         pan: req.body.pan,
         account_number: req.body.account_number,
@@ -323,7 +325,10 @@ app.post('/create-lead', upload.fields([
         branch: req.body.branch,
         holder_name: req.body.holder_name,
         bank_name: req.body.bank_name
-      })
+      }, { new: true });
+
+
+      return res.json({ message: 'Lead created and assigned successfully!', lead: lead });
     }
 
 
@@ -353,6 +358,7 @@ app.post('/create-lead', upload.fields([
       account_number: req.body.account_number,
       ifsc: req.body.ifsc,
       branch: req.body.branch,
+      pincodes: req.body.pincodes? JSON.parse(req.body.pincodes):[],
       holder_name: req.body.holder_name,
       bank_name: req.body.bank_name
     });
@@ -360,7 +366,7 @@ app.post('/create-lead', upload.fields([
     // Save the new lead
     const savedLead = await newLead.save();
 
-    res.json({ message: 'Lead created and assigned successfully!', lead: savedLead });
+   return res.json({ message: 'Lead created and assigned successfully!', lead: savedLead });
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: 'Error creating lead', error });
@@ -384,6 +390,8 @@ app.post('/create-lead-By-Manager', upload.fields([
         //applicationNumber:Math.random().toString(36).substring(7),
         // documentNumber:Math.random().toString(36).substring(7),
         mobile: req.body.mobile,
+        pincodes: req.body.pincodes? JSON.parse(req.body.pincodes):[],
+
         pincode: req.body.pincode,
         state: req.body.state,
         district: req.body.district,
@@ -401,7 +409,9 @@ app.post('/create-lead-By-Manager', upload.fields([
         branch: req.body.branch,
         holder_name: req.body.holder_name,
         bank_name: req.body.bank_name
-      })
+      },{new:true})
+     return res.json({ message: 'Lead created and assigned successfully!', lead: savedLead });
+
     }
 
 
@@ -416,6 +426,8 @@ app.post('/create-lead-By-Manager', upload.fields([
       documentNumber: randomNumber(),
       mobile: req.body.mobile,
       pincode: req.body.pincode,
+      pincodes: req.body.pincodes? JSON.parse(req.body.pincodes):[],
+
       district: req.body.district,
       selectedPostOfficeList: req.body.selectedPostOfficeList,
       state: req.body.state,
@@ -654,7 +666,7 @@ app.get('/user/step1WelcomeMAil/:id', async (req, res) => {
     res.status(500).json({ message: 'Error fetching user data', error });
   }
 });
-app.get('/user/step1WelcomeMAil/:id', async (req, res) => {
+app.get('/user/step2WelcomeMAil/:id', async (req, res) => {
 
   try {
     const user = await Lead.findById(req.params.id);
@@ -928,9 +940,18 @@ const sendMail = async (user) => {
           <p style="font-size: 16px;"><strong>Application No.:</strong> ${user.applicationNumber}</p>
           <p style="font-size: 16px;"><strong>Application Status:</strong> Approved</p>
           <p style="font-size: 16px;"><strong>Allocated Location:</strong></p>
-          <ul style="list-style: none; padding: 0;">
-            ${user.selectedPostOfficeList.map((post_office) => `<li style="margin-bottom: 10px; font-size: 16px;">📍 ${post_office}</li>`).join('')}
-          </ul>
+        <ul><strong>Allocated Location:</strong> 
+  ${user.pincodes.map((name) => `
+    <li>
+      <strong>${name.district} ${name.state} ${
+                        name.pincode
+                      },</strong>
+      <ul>
+        ${name.selectedPostOffices.map((office) => `<li>${office}</li>`).join('')}
+      </ul>
+    </li>
+  `).join('')}
+</ul>
 
           <h3 style="color: #ffd700; font-size: 22px; margin-top: 25px;">👤 Recipient Details</h3>
           <p style="font-size: 16px;"><strong>Name:</strong> ${user.username}</p>
@@ -1024,11 +1045,19 @@ const send2Mail = async (user) => {
                   <p><strong>Application No.:</strong> ${user.applicationNumber}</p>
                   <p><strong>Application Status:</strong> Approved</p>
                   
- <ul><strong>Allocated Location:</strong> 
-        ${user.selectedPostOfficeList.map((post_office) => `<li>${post_office}</li>`)
-      }
-          
-        </ul>
+<ul><strong>Allocated Location:</strong> 
+  ${user.pincodes.map((name) => `
+    <li>
+      <strong>${name.district} ${name.state} ${
+                        name.pincode
+                      },</strong>
+      <ul>
+        ${name.selectedPostOffices.map((office) => `<li>${office}</li>`).join('')}
+      </ul>
+    </li>
+  `).join('')}
+</ul>
+
                   <h3>Recipient Details</h3>
                   <p><strong>Name:</strong> ${user.username}</p>
                   <p><strong>Address:</strong> ${user.address}</p>
