@@ -726,6 +726,17 @@ app.get('/user/deleteButton/:id', async (req, res) => {
     res.status(500).json({ message: 'Error fetching user data', error });
   }
 });
+app.get('/manager/:id', async (req, res) => {
+  try {
+    console.log("sdsd")
+    const user = await User.findOne({unique_code:req.params.id});
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json(user);
+  } catch (error) {
+    console.log("sdsdd")
+    res.status(500).json({ message: 'Error fetching user data', error });
+  }
+});
 app.get('/user/followProposal/:id/:num', async (req, res) => {
   const num = parseInt(req.params.num); // Convert num to an integer
   const updateData = {};
