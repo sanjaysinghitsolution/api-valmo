@@ -37,6 +37,19 @@ const LeadSchema = new mongoose.Schema({
   mobile: String,
   pincode: String,
   state: String,
+  follow1:{
+    type: Boolean,
+    default: false
+  },
+  follow2:{
+    type: Boolean,
+    default: false
+  },
+  follow3:{
+    type: Boolean,
+    default: false
+  },
+ 
   district: String,
   selectedPostOfficeList: Array,
   approval_fees: String,
@@ -82,6 +95,19 @@ const proposalSchema = new mongoose.Schema({
   mobile: String,
   selectedRange:String,
   pincodes: Array,
+  follow1:{
+    type: Boolean,
+    default: false
+  },
+  follow2:{
+    type: Boolean,
+    default: false
+  },
+  follow3:{
+    type: Boolean,
+    default: false
+  },
+ 
   state: String,
   district: String,
   post_offices: Array,
@@ -700,6 +726,59 @@ app.get('/user/deleteButton/:id', async (req, res) => {
     res.status(500).json({ message: 'Error fetching user data', error });
   }
 });
+app.get('/user/followProposal/:id/:num', async (req, res) => {
+  const num = parseInt(req.params.num); // Convert num to an integer
+  const updateData = {};
+console.log(num)
+  if (num === 1) {
+    updateData.follow1 = true;
+  } else if (num === 2) {
+    updateData.follow2 = true;
+  } else if (num === 3) {
+    updateData.follow3 = true;
+  } else {
+    return res.status(400).json({ message: 'Invalid follow number' });
+  }
+
+  try {
+    const db = await proposal.findByIdAndUpdate(req.params.id, updateData, { new: true });
+    
+    if (!db) return res.status(404).json({ message: 'User not found' });
+    
+    res.json(db);
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating user data', error });
+  }
+});
+app.get('/user/followLead/:id/:num', async (req, res) => {
+  const num = parseInt(req.params.num); // Convert num to an integer
+  const updateData = {};
+console.log(num)
+  if (num === 1) {
+    updateData.follow1 = true;
+  } else if (num === 2) {
+    updateData.follow2 = true;
+  } else if (num === 3) {
+    updateData.follow3 = true;
+  } else {
+    return res.status(400).json({ message: 'Invalid follow number' });
+  }
+
+  try {
+    const db = await Lead.findByIdAndUpdate(req.params.id, updateData, { new: true });
+    
+    if (!db) return res.status(404).json({ message: 'User not found' });
+    
+    res.json(db);
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating user data', error });
+  }
+});
+
+
+
+
+
 app.delete('/proposals/:id', async (req, res) => {
   try {
     const user = await proposal.findByIdAndDelete(req.params.id);
