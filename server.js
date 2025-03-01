@@ -5,6 +5,7 @@ const multer = require('multer');
 const nodemailer = require('nodemailer');
 const app = express();
 const path = require("path");
+const fs= require("fs");
 // Middleware
 app.use(express.json());
 app.use(cors());
@@ -57,6 +58,10 @@ const LeadSchema = new mongoose.Schema({
   block: {
     type: Boolean,
     default: false
+  },
+  uploadedAl: {
+    type: String,
+    default: null
   }
 }, {
   timestamps: true
@@ -457,6 +462,56 @@ app.post('/create-lead-By-Manager', upload.fields([
     res.status(500).json({ message: 'Error creating lead', error });
   }
 });
+
+const storageForAL = multer.diskStorage({
+  destination: "./uploads/",
+  filename: (req, file, cb) => {
+      cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
+  }
+});
+
+const uploadForAL = multer({ storage: storageForAL });
+
+app.post("/uploadALetter", uploadForAL.single("pdfFile"), async(req, res) => {
+ try {
+  if (!req.file) {
+    return res.status(400).json({ message: "No file uploaded" });
+}
+await Lead.findByIdAndUpdate(req.body.userId, {
+  uploadedAl: req.file.path,
+  
+}
+)
+
+res.json({ message: "PDF uploaded successfully", filePath: req.file.path });
+ } catch (error) {
+  return res.status(400).json({ message: error.message });
+ }
+});
+
+
+app.get("/view/:id", async (req, res) => {
+  try {
+      const lead = await Lead.findById(req.params.id);
+      if (!lead || !lead.uploadedAl) {
+          return res.status(404).json({ message: "Lead or file not found" });
+      }
+console.log(path.join(__dirname, "uploads", lead.uploadedAl))
+      const filePath = path.join(__dirname,  lead.uploadedAl);
+      if (fs.existsSync(filePath)) {
+          res.sendFile(filePath);
+      } else {
+          res.status(404).json({ message: "File not found" });
+      }
+  } catch (error) {
+      console.error("Error fetching file:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+
+
+
 app.post('/franchise', async (req, res) => {
   console.log(req.body)
   try {
