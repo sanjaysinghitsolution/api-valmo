@@ -49,7 +49,10 @@ const LeadSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
- 
+ AssignedBank:{
+  type:String,
+  default:null
+ },
   district: String,
   selectedPostOfficeList: Array,
   approval_fees: String,
@@ -664,20 +667,192 @@ app.get('/getfranch', async (req, res) => {
     res.status(500).json({ message: 'Error retrieving last added bank', error });
   }
 });
+// app.get('/bank', async (req, res) => {
+//   try {
+//     // Assuming `created_at` is the field that stores the timestamp of insertion
+//     const lastBank = await bank.findOne().sort({ created_at: 1 });
+
+//     if (!lastBank) {
+//       return res.status(404).json({ message: 'No banks found' });
+//     }
+
+//     res.json(lastBank);
+//   } catch (error) {
+//     res.status(500).json({ message: 'Error retrieving last added bank', error });
+//   }
+// });
+// app.get('/Allbank', async (req, res) => {
+//   try {
+//     // Assuming `created_at` is the field that stores the timestamp of insertion
+//     const lastBank = await bank.find({ created_at: -1 });
+
+//     if (!lastBank) {
+//       return res.status(404).json({ message: 'No banks found' });
+//     }
+
+//     res.json(lastBank);
+//   } catch (error) {
+//     res.status(500).json({ message: 'Error retrieving last added bank', error });
+//   }
+// });
+
+
+
+
+
+
+
+
+
+
+
+
+
 app.get('/bank', async (req, res) => {
   try {
-    // Assuming `created_at` is the field that stores the timestamp of insertion
-    const lastBank = await bank.findOne().sort({ created_at: 1 });
-
+    const lastBank = await bank.findOne().sort({ created_at: -1 });  // Fix sorting to get the last bank added
     if (!lastBank) {
       return res.status(404).json({ message: 'No banks found' });
     }
-
     res.json(lastBank);
   } catch (error) {
     res.status(500).json({ message: 'Error retrieving last added bank', error });
   }
 });
+// app.get('/assignedBankOfUser/:userId', async (req, res) => {
+//   try {
+//     const lead= await Lead.findById( req.params.userId)
+//     const lastBank = await bank.findById(lead.AssignedBank)  // Fix sorting to get the last bank added
+//     if (!lastBank) {
+//       return res.status(404).json({ message: 'No banks found' });
+//     }
+//     res.json(lastBank);
+//   } catch (error) {
+//     console.log(error)
+//     res.status(500).json({ message: 'Error retrieving last added bank', error });
+//   }
+// });
+
+
+
+
+app.get('/assignedBankOfUser/:userId', async (req, res) => {
+  try {
+    let userId = req.params.userId;
+    userId = userId.replace(/[^a-fA-F0-9]/g, '');
+    // Check if the userId is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      
+      return res.status(400).json({ message: 'Invalid userId format' });
+    }
+
+    // Find the Lead by userId
+    const lead = await Lead.findById(userId);
+    if (!lead) {
+      
+      return res.status(404).json({ message: 'Lead not found' });
+    }
+    console.log(lead)
+    // Find the last assigned bank based on the AssignedBank field in Lead
+    const lastBank = await bank.findById(lead.AssignedBank);
+    if (!lastBank) {
+      console.log("userId",userId)
+      return res.status(404).json({ message: 'No assigned bank found for this lead' });
+    }
+
+    res.json(lastBank);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'Error retrieving last assigned bank', error });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+app.get('/Allbank', async (req, res) => {
+  try {
+    const allBanks = await bank.find().sort({ created_at: -1 }); // Fetch all banks and sort by created_at
+    if (!allBanks) {
+      return res.status(404).json({ message: 'No banks found' });
+    }
+    res.json(allBanks);
+  } catch (error) {
+    res.status(500).json({ message: 'Error retrieving banks', error });
+  }
+});
+
+// Update a bank by ID
+app.put('/update-bank/:id', async (req, res) => {
+  try {
+    const updatedBank = await bank.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!updatedBank) {
+      return res.status(404).json({ message: 'Bank not found' });
+    }
+    res.json(updatedBank);
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating bank', error });
+  }
+});
+
+// Delete a bank by ID
+app.delete('/delete-bank/:id', async (req, res) => {
+  try {
+    const deletedBank = await bank.findByIdAndDelete(req.params.id);
+    if (!deletedBank) {
+      return res.status(404).json({ message: 'Bank not found' });
+    }
+    res.json({ message: 'Bank deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting bank', error });
+  }
+});
+app.get('/assignBnk/:bankId/:userId', async (req, res) => {
+  console.log(req.params)
+  try {
+    const deletedBank = await Lead.findByIdAndUpdate(req.params.userId,{
+      AssignedBank: req.params.bankId
+    },{new:true});
+    console.log(deletedBank)
+    if (!deletedBank) {
+      return res.status(404).json({ message: 'Bank not found' });
+    } 
+    res.json({ message: 'Bank Assigned successfully' });
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Error deleting bank', error });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Fetch User by ID
 app.get('/user/:id', async (req, res) => {
   try {
