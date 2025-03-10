@@ -1,0 +1,126 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    line-height: 1.6;
+    padding-top: 120px; /* Space for fixed header */
+    color: #333;
+}
+
+.fixed-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #fff;
+    border-bottom: 2px solid #ddd;
+    padding: 10px 20px;
+    z-index: 1000;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #f00; /* Placeholder for Meesho logo */
+    margin-right: 20px;
+}
+
+.company-info h1 {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.company-info p {
+    font-size: 12px;
+    color: #666;
+}
+
+main {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+.page {
+    margin-bottom: 40px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+}
+
+h2 {
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+h3 {
+    font-size: 16px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+h4 {
+    font-size: 14px;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+p {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+ul {
+    list-style: none;
+    margin-left: 20px;
+}
+
+ul li {
+    font-size: 14px;
+    margin-bottom: 8px;
+    position: relative;
+}
+
+ul li i {
+    color: #28a745;
+    margin-right: 10px;
+}
+
+.meesho-logo {
+    font-size: 16px;
+    font-weight: bold;
+    color: #000;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.footer-info {
+    margin-top: 20px;
+    font-size: 12px;
+    color: #666;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}

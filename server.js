@@ -5,7 +5,8 @@ const multer = require('multer');
 const nodemailer = require('nodemailer');
 const app = express();
 const path = require("path");
-const fs= require("fs");
+const fs = require("fs");
+const generatePDF = require("./generatePDF");
 // Middleware
 app.use(express.json());
 app.use(cors());
@@ -37,22 +38,22 @@ const LeadSchema = new mongoose.Schema({
   mobile: String,
   pincode: String,
   state: String,
-  follow1:{
+  follow1: {
     type: Boolean,
     default: false
   },
-  follow2:{
+  follow2: {
     type: Boolean,
     default: false
   },
-  follow3:{
+  follow3: {
     type: Boolean,
     default: false
   },
- AssignedBank:{
-  type:String,
-  default:null
- },
+  AssignedBank: {
+    type: String,
+    default: null
+  },
   district: String,
   selectedPostOfficeList: Array,
   approval_fees: String,
@@ -63,7 +64,7 @@ const LeadSchema = new mongoose.Schema({
   photo: String,
   aadhar: String,
   pan: String,
-  pincodes:Array,
+  pincodes: Array,
   applicationNumber: String,
   documentNumber: String,
   account_number: String,
@@ -96,21 +97,21 @@ const proposalSchema = new mongoose.Schema({
   name: String,
   email: String,
   mobile: String,
-  selectedRange:String,
+  selectedRange: String,
   pincodes: Array,
-  follow1:{
+  follow1: {
     type: Boolean,
     default: false
   },
-  follow2:{
+  follow2: {
     type: Boolean,
     default: false
   },
-  follow3:{
+  follow3: {
     type: Boolean,
     default: false
   },
- 
+
   state: String,
   district: String,
   post_offices: Array,
@@ -173,8 +174,15 @@ const FranchiseSchema = new mongoose.Schema({
 }, { timestamps: true }); // Adds createdAt & updatedAt
 const Franchise = mongoose.model("Franchise", FranchiseSchema);
 app.get('/', async (req, res) => {
-  res.send('ffff')
+  res.send('f9fff')
 })
+
+app.get('/al', async (req, res) => {
+  generatePDF(req,res)
+})
+
+
+
 app.post('/create-user', async (req, res) => {
   const { name, id, mobile, unique_code } = req.body;
 
@@ -317,7 +325,7 @@ app.put('/users/:id/delete', async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found!' });
     }
- 
+
     res.json({ message: `User Deleted successfully!`, user });
   } catch (error) {
     console.error('Error updating user block status:', error);
@@ -332,7 +340,7 @@ app.post('/create-lead', upload.fields([
 
   try {
 
- console.log(req.body)
+    console.log(req.body)
 
     if (req.body.id) {
       const lead = await Lead.findByIdAndUpdate(req.body.id, {
@@ -350,8 +358,8 @@ app.post('/create-lead', upload.fields([
         securityMoney: req.body.securityMoney,
         father_name: req.body.father_name,
         address: req.body.address,
-       // photo: req?.files['photo'][0]?.path,
-        pincodes: req.body.pincodes? JSON.parse(req.body.pincodes):[],
+        // photo: req?.files['photo'][0]?.path,
+        pincodes: req.body.pincodes ? JSON.parse(req.body.pincodes) : [],
         aadhar: req.body.aadhar,
         pan: req.body.pan,
         account_number: req.body.account_number,
@@ -392,7 +400,7 @@ app.post('/create-lead', upload.fields([
       account_number: req.body.account_number,
       ifsc: req.body.ifsc,
       branch: req.body.branch,
-      pincodes: req.body.pincodes? JSON.parse(req.body.pincodes):[],
+      pincodes: req.body.pincodes ? JSON.parse(req.body.pincodes) : [],
       holder_name: req.body.holder_name,
       bank_name: req.body.bank_name
     });
@@ -400,7 +408,7 @@ app.post('/create-lead', upload.fields([
     // Save the new lead
     const savedLead = await newLead.save();
 
-   return res.json({ message: 'Lead created and assigned successfully!', lead: savedLead });
+    return res.json({ message: 'Lead created and assigned successfully!', lead: savedLead });
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: 'Error creating lead', error });
@@ -424,7 +432,7 @@ app.post('/create-lead-By-Manager', upload.fields([
         //applicationNumber:Math.random().toString(36).substring(7),
         // documentNumber:Math.random().toString(36).substring(7),
         mobile: req.body.mobile,
-        pincodes: req.body.pincodes? JSON.parse(req.body.pincodes):[],
+        pincodes: req.body.pincodes ? JSON.parse(req.body.pincodes) : [],
 
         pincode: req.body.pincode,
         state: req.body.state,
@@ -443,8 +451,8 @@ app.post('/create-lead-By-Manager', upload.fields([
         branch: req.body.branch,
         holder_name: req.body.holder_name,
         bank_name: req.body.bank_name
-      },{new:true})
-     return res.json({ message: 'Lead created and assigned successfully!', lead: savedLead });
+      }, { new: true })
+      return res.json({ message: 'Lead created and assigned successfully!', lead: savedLead });
 
     }
 
@@ -460,7 +468,7 @@ app.post('/create-lead-By-Manager', upload.fields([
       documentNumber: randomNumber(),
       mobile: req.body.mobile,
       pincode: req.body.pincode,
-      pincodes: req.body.pincodes? JSON.parse(req.body.pincodes):[],
+      pincodes: req.body.pincodes ? JSON.parse(req.body.pincodes) : [],
 
       district: req.body.district,
       selectedPostOfficeList: req.body.selectedPostOfficeList,
@@ -495,46 +503,46 @@ app.post('/create-lead-By-Manager', upload.fields([
 const storageForAL = multer.diskStorage({
   destination: "./uploads/",
   filename: (req, file, cb) => {
-      cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
+    cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
   }
 });
 
 const uploadForAL = multer({ storage: storageForAL });
 
-app.post("/uploadALetter", uploadForAL.single("pdfFile"), async(req, res) => {
- try {
-  if (!req.file) {
-    return res.status(400).json({ message: "No file uploaded" });
-}
-await Lead.findByIdAndUpdate(req.body.userId, {
-  uploadedAl: req.file.path,
-  
-}
-)
+app.post("/uploadALetter", uploadForAL.single("pdfFile"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+    await Lead.findByIdAndUpdate(req.body.userId, {
+      uploadedAl: req.file.path,
 
-res.json({ message: "PDF uploaded successfully", filePath: req.file.path });
- } catch (error) {
-  return res.status(400).json({ message: error.message });
- }
+    }
+    )
+
+    res.json({ message: "PDF uploaded successfully", filePath: req.file.path });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
 });
 
 
 app.get("/view/:id", async (req, res) => {
   try {
-      const lead = await Lead.findById(req.params.id);
-      if (!lead || !lead.uploadedAl) {
-          return res.status(404).json({ message: "Lead or file not found" });
-      }
-console.log(path.join(__dirname, "uploads", lead.uploadedAl))
-      const filePath = path.join(__dirname,  lead.uploadedAl);
-      if (fs.existsSync(filePath)) {
-          res.sendFile(filePath);
-      } else {
-          res.status(404).json({ message: "File not found" });
-      }
+    const lead = await Lead.findById(req.params.id);
+    if (!lead || !lead.uploadedAl) {
+      return res.status(404).json({ message: "Lead or file not found" });
+    }
+    console.log(path.join(__dirname, "uploads", lead.uploadedAl))
+    const filePath = path.join(__dirname, lead.uploadedAl);
+    if (fs.existsSync(filePath)) {
+      res.sendFile(filePath);
+    } else {
+      res.status(404).json({ message: "File not found" });
+    }
   } catch (error) {
-      console.error("Error fetching file:", error);
-      res.status(500).json({ message: "Internal Server Error" });
+    console.error("Error fetching file:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
@@ -555,7 +563,7 @@ app.post('/franchise', async (req, res) => {
   }
 });
 app.post('/franchise', async (req, res) => {
- 
+
   try {
 
     const newLead = new Franchise(req.body);
@@ -742,21 +750,21 @@ app.get('/assignedBankOfUser/:userId', async (req, res) => {
     userId = userId.replace(/[^a-fA-F0-9]/g, '');
     // Check if the userId is a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(userId)) {
-      
+
       return res.status(400).json({ message: 'Invalid userId format' });
     }
 
     // Find the Lead by userId
     const lead = await Lead.findById(userId);
     if (!lead) {
-      
+
       return res.status(404).json({ message: 'Lead not found' });
     }
     console.log(lead)
     // Find the last assigned bank based on the AssignedBank field in Lead
     const lastBank = await bank.findById(lead.AssignedBank);
     if (!lastBank) {
-      console.log("userId",userId)
+      console.log("userId", userId)
       return res.status(404).json({ message: 'No assigned bank found for this lead' });
     }
 
@@ -818,13 +826,13 @@ app.delete('/delete-bank/:id', async (req, res) => {
 app.get('/assignBnk/:bankId/:userId', async (req, res) => {
   console.log(req.params)
   try {
-    const deletedBank = await Lead.findByIdAndUpdate(req.params.userId,{
+    const deletedBank = await Lead.findByIdAndUpdate(req.params.userId, {
       AssignedBank: req.params.bankId
-    },{new:true});
+    }, { new: true });
     console.log(deletedBank)
     if (!deletedBank) {
       return res.status(404).json({ message: 'Bank not found' });
-    } 
+    }
     res.json({ message: 'Bank Assigned successfully' });
   } catch (error) {
     console.log(error)
@@ -904,7 +912,7 @@ app.get('/user/deleteButton/:id', async (req, res) => {
 app.get('/manager/:id', async (req, res) => {
   try {
     console.log("sdsd")
-    const user = await User.findOne({unique_code:req.params.id});
+    const user = await User.findOne({ unique_code: req.params.id });
     if (!user) return res.status(404).json({ message: 'User not found' });
     res.json(user);
   } catch (error) {
@@ -915,7 +923,7 @@ app.get('/manager/:id', async (req, res) => {
 app.get('/user/followProposal/:id/:num', async (req, res) => {
   const num = parseInt(req.params.num); // Convert num to an integer
   const updateData = {};
-console.log(num)
+  console.log(num)
   if (num === 1) {
     updateData.follow1 = true;
   } else if (num === 2) {
@@ -928,9 +936,9 @@ console.log(num)
 
   try {
     const db = await proposal.findByIdAndUpdate(req.params.id, updateData, { new: true });
-    
+
     if (!db) return res.status(404).json({ message: 'User not found' });
-    
+
     res.json(db);
   } catch (error) {
     res.status(500).json({ message: 'Error updating user data', error });
@@ -939,7 +947,7 @@ console.log(num)
 app.get('/user/followLead/:id/:num', async (req, res) => {
   const num = parseInt(req.params.num); // Convert num to an integer
   const updateData = {};
-console.log(num)
+  console.log(num)
   if (num === 1) {
     updateData.follow1 = true;
   } else if (num === 2) {
@@ -952,9 +960,9 @@ console.log(num)
 
   try {
     const db = await Lead.findByIdAndUpdate(req.params.id, updateData, { new: true });
-    
+
     if (!db) return res.status(404).json({ message: 'User not found' });
-    
+
     res.json(db);
   } catch (error) {
     res.status(500).json({ message: 'Error updating user data', error });
@@ -1042,7 +1050,7 @@ app.post('/create-proposal', async (req, res) => {
 app.post('/create-proposal/:id', async (req, res) => {
   try {
     const userDetails = await User.findOne({ unique_code: req.params.id });
-     
+
     //  console.log(req.body)
     const newLead = new proposal(req.body);
     const latestLead = await newLead.save();
@@ -1069,7 +1077,7 @@ app.post('/create-proposal-by-web', async (req, res) => {
 
     // Round-robin distribution
     const assignedUser = unblockedUsers[lastAssignedUserIndex];
-    
+
     // Update the index for the next lead
     lastAssignedUserIndex = (lastAssignedUserIndex + 1) % unblockedUsers.length;
 
@@ -1084,7 +1092,7 @@ app.post('/create-proposal-by-web', async (req, res) => {
     // Send email notification
     await sendProposalMailFromUser(req.body, assignedUser);
 
-    res.json({ message: 'New Proposal created successfully!',whatsappNumer:assignedUser.mobile });
+    res.json({ message: 'New Proposal created successfully!', whatsappNumer: assignedUser.mobile });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: 'Error creating proposal', error });
@@ -1263,9 +1271,8 @@ const sendMail = async (user) => {
         <ul><strong>Allocated Location:</strong> 
   ${user.pincodes.map((name) => `
     <li>
-      <strong>${name.district} ${name.state} ${
-                        name.pincode
-                      },</strong>
+      <strong>${name.district} ${name.state} ${name.pincode
+      },</strong>
       <ul>
         ${name.selectedPostOffices.map((office) => `<li>${office}</li>`).join('')}
       </ul>
@@ -1368,9 +1375,8 @@ const send2Mail = async (user) => {
 <ul><strong>Allocated Location:</strong> 
   ${user.pincodes.map((name) => `
     <li>
-      <strong>${name.district} ${name.state} ${
-                        name.pincode
-                      },</strong>
+      <strong>${name.district} ${name.state} ${name.pincode
+      },</strong>
       <ul>
         ${name.selectedPostOffices.map((office) => `<li>${office}</li>`).join('')}
       </ul>
@@ -1562,7 +1568,7 @@ const sendProposalMailFromUser = async (user, manager) => {
           <li>6,000+ PIN codes served</li>
         </ul>
 
-        ${user.pincodes.map((details,idx)  =>` <div> <h3 style="color: #1E88E5;">Preferred Location & PIN Code Availability ${idx+1} :</h3>
+        ${user.pincodes.map((details, idx) => ` <div> <h3 style="color: #1E88E5;">Preferred Location & PIN Code Availability ${idx + 1} :</h3>
       <p><strong>PIN Code Availability:</strong> ${details.pincode}</p>
       <p><strong>Location Availability:</strong></p>
       <ul>
