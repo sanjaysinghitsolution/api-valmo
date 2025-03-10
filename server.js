@@ -1546,7 +1546,9 @@ const sendProposalMailFromUser = async (user, manager) => {
     auth: {
       user: "hello@valmodelivery.com",
       pass: "sanjay@9523" // Replace with actual email password
-    }
+    },
+    debug: true, // Enable debugging
+    logger: true  // Log all SMTP transactions
   });
 
   const mailOptions = {
