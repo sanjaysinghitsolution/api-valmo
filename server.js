@@ -1056,7 +1056,7 @@ app.post('/create-proposal/:id', async (req, res) => {
     const latestLead = await newLead.save();
     userDetails.proposalList.push(latestLead._id);
     await userDetails.save();
-    await sendProposalMailFromUser(req.body, userDetails);
+    // await sendProposalMailFromUser(req.body, userDetails);
 
     res.json({ message: 'New Proposal created successfully!' });
   } catch (error) {
