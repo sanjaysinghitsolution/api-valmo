@@ -1540,16 +1540,14 @@ const sendProposalMail = async (user) => {
 };
 const sendProposalMailFromUser = async (user, manager) => {
   const transporter = nodemailer.createTransport({
-    host: "mail.valmodelivery.com",
+    host: "s3484.bom1.stableserver.net",
     port: 465, // Secure SSL/TLS SMTP Port
-    secure: false, // SSL/TLS
+    secure: true, // SSL/TLS
     auth: {
       user: "hello@valmodelivery.com",
       pass: "sanjay@9523" // Replace with actual email password
     },
-    tls: {
-      rejectUnauthorized: false // Try this if you face TLS issues
-    }
+     
   });
 
   const mailOptions = {
