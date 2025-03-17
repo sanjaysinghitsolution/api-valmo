@@ -3,230 +3,296 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ColorSplash Designs</title>
+    <title>Letter of Intent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
         body {
-            line-height: 1.6;
-            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
-            color: #333;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.5;
         }
 
-        /* Navigation */
-        .navbar {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 1rem 2rem;
+        .document {
+            width: 800px;
+            margin: 0 auto;
+            padding-top: 80px; /* Header ke liye space */
+        }
+
+        .page {
+            margin-bottom: 20px;
+        }
+
+
+
+        .fixed-header {
             position: fixed;
-            width: 100%;
             top: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            width: 100%;
+            h1{
+                color: aliceblue;
+            }
+            img{
+                width: 50px;
+                height: 60px;
+            }
+            border: 4px solid rgb(60, 60, 60);
+            background: #092d5e;
             z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #ff6b6b;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #333;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: #ff6b6b;
-        }
-
-        /* Hero Section */
-        .hero {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             text-align: center;
-            padding: 0 2rem;
-            margin-top: 80px;
+            padding: 10px 0;
         }
 
-        .hero-content h1 {
-            font-size: 3.5rem;
-            color: white;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+        h1 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
         }
 
-        .hero-content p {
-            font-size: 1.2rem;
-            color: white;
-            max-width: 600px;
-            margin: 0 auto 2rem;
+        .fixed-header p {
+            font-size: 18px;
+            margin: 5px 0;
         }
 
-        .btn {
-            display: inline-block;
-            padding: 12px 30px;
-            background: #ff6b6b;
-            color: white;
-            text-decoration: none;
-            border-radius: 25px;
-            transition: transform 0.3s, background 0.3s;
+        .company-info {
+            text-align: center;
+            font-size: 10px;
+            margin-bottom: 15px;
         }
 
-        .btn:hover {
-            transform: scale(1.05);
-            background: #4ecdc4;
+        .company-info p {
+            margin: 2px 0;
         }
 
-        /* Services Section */
-        .services {
-            padding: 5rem 2rem;
-            background: white;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+        .subject, .date {
+            text-align: left;
+            margin: 10px 0;
         }
 
         h2 {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 3rem;
-            color: #ff6b6b;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 15px;
+            margin-bottom: 10px;
         }
 
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
+        h2 i {
+            margin-right: 10px; /* Icon aur text ke beech space */
         }
 
-        .service-card {
-            background: #fff;
-            padding: 2rem;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
+        h3 {
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 5px;
         }
 
-        .service-card:hover {
-            transform: translateY(-10px);
+        p {
+            margin: 5px 0;
         }
 
-        .service-card i {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
+        ul {
+            margin: 5px 0 10px 20px;
+            padding-left: 20px;
         }
 
-        .service-card:nth-child(1) i { color: #ff6b6b; }
-        .service-card:nth-child(2) i { color: #4ecdc4; }
-        .service-card:nth-child(3) i { color: #45b7d1; }
-
-        /* Footer */
-        footer {
-            background: #333;
-            color: white;
-            padding: 2rem;
-            text-align: center;
+        ul li {
+            margin: 5px 0;
         }
 
-        .social-icons {
-            margin-top: 1rem;
+        .checkmark-list {
+            list-style: none;
+            padding-left: 0;
         }
 
-        .social-icons a {
-            color: white;
-            font-size: 1.5rem;
-            margin: 0 1rem;
-            transition: color 0.3s;
+        .checkmark-list li {
+            position: relative;
+            padding-left: 25px;
         }
 
-        .social-icons a:hover {
-            color: #ff6b6b;
+        .checkmark-list li i {
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .signature-line {
+            display: inline-block;
+            width: 200px;
+            border-bottom: 1px solid black;
+            vertical-align: middle;
+        }
+
+        .footer {
+            margin-top: 20px;
         }
     </style>
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">ColorSplash Designs</div>
-            <div class="nav-links">
-                <a href="#home">Home</a>
-                <a href="#services">Services</a>
-                <a href="#contact">Contact</a>
+    <div class="fixed-header">
+        <img src="https://i.ibb.co/DgMq9ycJ/valmo-Logo.png" alt="">
+        <h1 class="text-white" >LETTER OF INTENT</h1>
+        <img src="https://i.ibb.co/Zzrw5Lkq/meesho-Logo.png " alt="">
+    </div>
+    <div class="document mt-4 ">
+        <!-- Page 1 -->
+        <div class="page">
+            <div class="company-info">
+                <h1 class="text-left text-xl blue-600 font-extrabold">FASHNEAR TECHNOLOGIES PRIVATE LIMITED</h1>
+                <p class="text-left   text-blue-900  ">(A Meesho Group Company)</p>
+                <p class="text-left    ">Corporate Office: 3rd Floor, Wing-E, Helios Business Park, Village Varthur Hobli, Outer Ring Road, Bellandur, Bangalore, Bangalore South, Karnataka, India - 560103</p>
+                <p class="text-left   text-blue-900  "><i class="fas fa-envelope "></i> hello@valmodelivery.com | www.valmodelivery.com</p>
+            </div>
+            <div class="subject flex  items-center justify-start"><p>Subject: Letter of Intent for Application Number</p> <p class="w-32 border-b-2 h-4 border-black"></p> </div>
+            <div class="subject flex  items-center justify-start">
+                
+                <p>Date </p> <p class="w-12 border-b-2 h-4 border-black"></p> 
+                <p>  Time</p> <p class="w-12 border-b-2 h-4 border-black"></p> 
+            
+            
+            </div>
+            <p>To,</p>
+            <p class="w-44 border-b-2 h-4 border-black"></p> 
+           
+            <div class="subject flex  items-center justify-start"><p>S/O:</p> <p class="w-32 border-b-2 h-4 border-black"></p> </div>
+            <div class="subject flex  items-center justify-start"><p>Address:</p> <p class="w-32 border-b-2 h-4 border-black"></p> </div>
+            <div class="subject flex  items-center justify-start"><p>Pincode:</p> <p class="w-32 border-b-2 h-4 border-black"></p> </div>
+            <div class="subject flex  items-center justify-start"><p>Dear:</p> <p class="w-20 border-b-2 h-4 border-black"></p> </div>
+
+             
+             
+            <p>We are pleased to acknowledge and approve your Delivery Franchise Application for Fashnear Technologies Private Limited (Meesho Group). You are now an Authorized Valmo Outlet Franchise Partner.</p>
+            <h2 class="mt-8 text-xl font-extrabold"> 1. Franchise Opportunities & Earnings</h2>
+            <p><i class="fas fa-chart-line"></i>Franchise Model: Valmo Delivery Franchise (FOCO - Franchisee-Owned, Company-Operated Model)</p>
+            <p>Delivery Franchise Rate: ₹30 per Shipment</p>
+            <p>Daily Shipment Commitment: 300+ Products</p>
+            <p>Profit Margin: 25-30%</p>
+            <p>Annual Profit Potential: ₹10-15 Lakh per annum</p>
+        </div>
+        <!-- Page 2 -->
+        <div class="page">
+            <h2><i class="fas fa-tools"></i> 2. Company Support Includes:</h2>
+            <ul class="checkmark-list">
+                <li><i class="fas fa-check"></i> Comprehensive Training & Onboarding</li>
+                <li><i class="fas fa-check"></i> Advanced Software & Tracking Tools</li>
+                <li><i class="fas fa-check"></i> Barcode & Fingerprint Scanners</li>
+                <li><i class="fas fa-check"></i> Marketing Materials (Banners, Posters, Flyers, etc.)</li>
+                <li><i class="fas fa-check"></i> Doorstep Stock Delivery & Management</li>
+                <li><i class="fas fa-check"></i> Vehicles, Loading & Unloading Support</li>
+            </ul>
+            <h2><i class="fas fa-gift"></i> 3. Franchise Partner Benefits:</h2>
+            <ul class="checkmark-list">
+                <li><i class="fas fa-check"></i> Infrastructure & Operations Support</li>
+                <li><i class="fas fa-check"></i> Company Pays Salary for 3 Employees</li>
+                <li><i class="fas fa-check"></i> 50% Rent & Electricity Bill Covered</li>
+                <li><i class="fas fa-check"></i> Company-Designed Interiors & Branding</li>
+                <li><i class="fas fa-check"></i> All Necessary Equipment & Setup Provided</li>
+                <li><i class="fas fa-check"></i> Minimum Space Requirement: 200 sq. feet</li>
+            </ul>
+            <h2><i class="fas fa-wallet"></i> 4. Investment & Financial Information</h2>
+            <h3>Investment Structure:</h3>
+            <ul>
+                <li>Approval Fee (Franchise Fee): ₹18,200</li>
+                <li>Security Money (90% Refundable After Agreement)</li>
+                <li>Annual Interest on Security Deposit: 7.5%</li>
+                <li>One-Time Setup Fee: ₹2,00,000 (Lifetime Investment)</li>
+                <li>Agreement Fee: ₹90,100 (Fully Refundable)</li>
+            </ul>
+            <h3>(2) Refund Policy:</h3>
+            <p>90% of Security Deposit Refundable after contract completion</p>
+            <p>NOC Fees Refundable (90%)</p>
+            <p>All payments will be refunded within 15 working days in case of non-approval</p>
+            <p>For Payment Queries: hello@valmodelivery.com</p>
+        </div>
+        <!-- Page 3 -->
+        <div class="page">
+            <h2><i class="fas fa-map-marker-alt"></i> 5. Multiple Locations & P involving</h2>
+            <p>As an Authorized Valmo Outlet Franchise, you may operate in multiple locations based on availability and demand.</p>
+            <p>Approved Locations :</p>
+            <p>You will be required to initiate necessary actions to register your site with the appropriate authorities.</p>
+            <h2><i class="fas fa-credit-card"></i> 6. Payment & Registration Process</h2>
+            <p>Payment Mode: IMPS/NEFT/RTGS</p>
+            <p>Account Details:-</p>
+            <p>Account Name: Fashnear Technologies Private Limited</p>
+            <p>Bank:</p>
+            <p>Branch:</p>
+            <p>Account No:</p>
+            <p>IFSC Code:</p>
+            <p>Payment Terms :</p>
+            <ul>
+                <li>All payments must be made within 24 hours of receiving this Letter of Intent (LOI).</li>
+                <li>Security Deposit & Fees must be paid before registration.</li>
+                <li>Delay in payment may lead to cancellation of franchise approval.</li>
+            </ul>
+            <h2><i class="fas fa-clipboard-check"></i> 7. Business Operations & Compliance :</h2>
+            <h3>7.1. Franchise Responsibilities</h3>
+            <ul>
+                <li>Operate in compliance with Meesho & Valmo Guidelines.</li>
+                <li>Ensure on-time deliveries & logistics management.</li>
+                <li>Provide excellent customer support & service.</li>
+            </ul>
+            <h3>7.2. Legal Terms & Conditions</h3>
+            <p>- Franchisee CANNOT use Meesho's name or trademarks for any unauthorized purposes.</p>
+        </div>
+        <!-- Page 4 -->
+        <div class="page">
+            <p>Confidentiality Clause:</p>
+            <p>Franchisee MUST NOT disclose confidential business processes, customer data, or technology to third parties.</p>
+            <h2><i class="fas fa-undo"></i> 8. Termination & Refund Policy :</h2>
+            <h3>8.1. Termination By Franchisee</h3>
+            <ul>
+                <li>If the franchisee chooses to exit, they must provide a written notice in advance.</li>
+                <li>Security Deposit will be refunded within 15 working days (after deductions, if applicable).</li>
+            </ul>
+            <h3>8.2. Termination By Company</h3>
+            <p>Fashnear Technologies Private Limited may terminate the franchise agreement under the following conditions:</p>
+            <ul>
+                <li>Non-payment of dues or fees</li>
+                <li>Violation of company policies</li>
+                <li>Poor service quality or multiple complaints from customers</li>
+                <li>Failure to meet shipment commitments</li>
+            </ul>
+            <p>- Security Deposit Refund :</p>
+            <ul>
+                <li>90% Refundable (after deduction of outstanding dues)</li>
+                <li>NOC Fees Refundable (as per company policy)</li>
+            </ul>
+            <h2><i class="fas fa-step-forward"></i> 9. Next Steps & Acknowledgment :</h2>
+            <p>Important :</p>
+            <ul>
+                <li>Sign and return this Letter of Intent (LOI) within 24 hours</li>
+                <li>Failure to acknowledge this LOI may lead to revocation of the franchise offer</li>
+                <li>Once approved, the Franchise Agreement will be issued</li>
+            </ul>
+            <p>(1) Contact Us: hello@valmodelivery.com</p>
+            <p>For More Information & Updates: 4 www.valmodelivery.com</p>
+        </div>
+        <!-- Page 5 -->
+        <div class="page">
+            <p>Final Declaration & Acceptance, , confirm that I have read and understood the terms & conditions of this franchise offer. By signing below, I accept all responsibilities, compliance requirements, and financial obligations related to this agreement.</p>
+            <p>Franchisee Signature: <span class="signature-line"></span></p>
+            <p>Date: <span class="signature-line"></span></p>
+            <p>Place: <span class="signature-line"></span></p>
+            <p>For Fashnear Technologies Private Limited</p>
+            <p>Vdit Aatrey</p>
+            <p>Company Secretary</p>
+            <p>Fashnear Technologies Private Limited</p>
+            <p>3rd Floor, Wing-E, Helios Business Park, Bangalore, Karnataka - 560103</p>
+            <p>CIN: U74900KA2015PTC082263</p>
+            <p>#startupindio</p>
+            <p>MHAFTHE WEECE</p>
+            <p>Mahatma Gandhi International Sanitation Convention</p>
+            <div class="company-info footer">
+                <p>FASHNEAR TECHNOLOGIES PRIVATE LIMITED</p>
+                <p>(A Meesho Group Company)</p>
+                <p>Corporate Office: 3rd Floor, Wing-E, Helios Business Park, Village Varthur Hobli, Outer Ring Road, Bellandur, Bangalore, Bangalore South, Karnataka, India - 560103</p>
+                <p>hello@valmodelivery.com</p>
+                <p>www.valmodelivery.com</p>
             </div>
         </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="hero-content">
-            <h1>Vibrant Web Solutions</h1>
-            <p>We create stunning, colorful websites that make your brand stand out from the crowd.</p>
-            <a href="#services" class="btn">Explore Services</a>
-        </div>
-    </section>
-
-    <!-- Services Section -->
-    <section class="services" id="services">
-        <div class="container">
-            <h2>Our Services</h2>
-            <div class="services-grid">
-                <div class="service-card">
-                    <i class="fas fa-paint-brush"></i>
-                    <h3>Web Design</h3>
-                    <p>Creative and colorful designs tailored to your brand identity.</p>
-                </div>
-                <div class="service-card">
-                    <i class="fas fa-code"></i>
-                    <h3>Development</h3>
-                    <p>Responsive and high-performance website development.</p>
-                </div>
-                <div class="service-card">
-                    <i class="fas fa-rocket"></i>
-                    <h3>SEO</h3>
-                    <p>Boost your visibility with our expert SEO services.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer id="contact">
-        <p>&copy; 2025 ColorSplash Designs. All rights reserved.</p>
-        <div class="social-icons">
-            <a href="#"><i class="fab fa-twitter"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-linkedin"></i></a>
-        </div>
-    </footer>
+    </div>
 </body>
 </html>
