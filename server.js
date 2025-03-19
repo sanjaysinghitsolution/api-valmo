@@ -178,7 +178,7 @@ app.get('/', async (req, res) => {
 })
 
 app.get('/al', async (req, res) => {
-  generatePDF(req,res)
+  generatePDF(req, res)
 })
 
 
@@ -982,15 +982,17 @@ app.delete('/proposals/:id', async (req, res) => {
     res.status(500).json({ message: 'Error fetching user data', error });
   }
 });
-app.get('/user/step1WelcomeMAil/:id', async (req, res) => {
-
+app.get('/user/step1WelcomeMAil/:id/:manager', async (req, res) => {
   try {
+
     const user = await Lead.findById(req.params.id);
+    const manager = await User.findOne({unique_code:req.params.manager});
+    console.log("manager")
     if (!user) return res.status(404).json({ message: 'User not found' });
-    await sendMail(user);
+    await sendMail(user, manager)
     res.json(user);
   } catch (error) {
-
+    console.log(error)
     res.status(500).json({ message: 'Error fetching user data', error });
   }
 });
@@ -1050,14 +1052,12 @@ app.post('/create-proposal', async (req, res) => {
 app.post('/create-proposal/:id', async (req, res) => {
   try {
     const userDetails = await User.findOne({ unique_code: req.params.id });
-
     //  console.log(req.body)
     const newLead = new proposal(req.body);
     const latestLead = await newLead.save();
     userDetails.proposalList.push(latestLead._id);
     await userDetails.save();
     await sendProposalMailFromUser(req.body, userDetails);
-
     res.json({ message: 'New Proposal created successfully!' });
   } catch (error) {
     console.log(error)
@@ -1227,7 +1227,7 @@ const sendMailToEmail = async (user) => {
 //   console.log("Email sent successfully to", user.email);
 // };
 
-const sendMail = async (user) => {
+const sendMail = async (user,manager) => {
   const transporter = nodemailer.createTransport({
     host: "mail.valmodelivery.com",
     port: 465, // Secure SSL/TLS SMTP Port
@@ -1248,22 +1248,21 @@ const sendMail = async (user) => {
           <h2 style="text-align: center; color: #ffd700; font-size: 28px; margin-bottom: 20px;">🎉 Greetings from Valmo!</h2>
           <p style="font-size: 16px; line-height: 1.6;">Dear <strong style="color: #ffd700;">${user.username}</strong>,</p>
           <p style="font-size: 16px; line-height: 1.6;">We are India's most reliable and cost-effective logistics service provider, committed to streamlining the delivery process.</p>
-
           <h3 style="color: #ffd700; font-size: 22px; margin-top: 25px;">🌟 Why Partner with Valmo?</h3>
           <ul style="list-style: none; padding: 0;">
+                 
             <li style="margin-bottom: 10px; font-size: 16px;">✔️ 9+ lakh orders shipped per day</li>
             <li style="margin-bottom: 10px; font-size: 16px;">✔️ 30,000+ delivery executives</li>
             <li style="margin-bottom: 10px; font-size: 16px;">✔️ 3,000+ partners</li>
             <li style="margin-bottom: 10px; font-size: 16px;">✔️ 6,000+ PIN codes covered</li>
-          </ul>
-
+           
+          </ul>       
           <h3 style="color: #ffd700; font-size: 22px; margin-top: 25px;">💼 Franchise Opportunities</h3>
           <p style="font-size: 16px; line-height: 1.6;">We invite you to join us as a Delivery Partner or District Franchisee:</p>
           <ul style="list-style: none; padding: 0;">
             <li style="margin-bottom: 10px; font-size: 16px;">✅ Profit Margin: 25-30% of total revenue</li>
             <li style="margin-bottom: 10px; font-size: 16px;">✅ Annual Profit Potential: ₹10-15 lakh per annum</li>
           </ul>
-
           <h3 style="color: #ffd700; font-size: 22px; margin-top: 25px;">📄 Application Details</h3>
           <p style="font-size: 16px;"><strong>Application No.:</strong> ${user.applicationNumber}</p>
           <p style="font-size: 16px;"><strong>Application Status:</strong> Approved</p>
@@ -1279,7 +1278,6 @@ const sendMail = async (user) => {
     </li>
   `).join('')}
 </ul>
-
           <h3 style="color: #ffd700; font-size: 22px; margin-top: 25px;">👤 Recipient Details</h3>
           <p style="font-size: 16px;"><strong>Name:</strong> ${user.username}</p>
           <p style="font-size: 16px;"><strong>Address:</strong> ${user.address}</p>
@@ -1306,18 +1304,17 @@ const sendMail = async (user) => {
       onclick="this.select()"
     />            </p>
           </div>
-
+  
           <p style="font-size: 16px; text-align: center;">
             <a href="https://www.valmodelivery.com/status.html" style="color: #ffd700; text-decoration: none; font-weight: bold;">👉 Click here to Login</a>
           </p>
-
           <p style="font-size: 16px; text-align: center; margin-top: 30px;">
             Best regards,<br>
-            <strong>Rajiv Singh</strong><br>
+            <strong> ${manager.name} </strong><br>
             Business Development Team<br>
             Valmo Logistics<br>
             📧 <a href="mailto:hello@valmodelivery.com" style="color: #ffd700;">hello@valmodelivery.com</a><br>
-            📞 +917004455359
+            📞 ${manager.mobile}
           </p>
         </div>
       </div>
@@ -1389,14 +1386,11 @@ const send2Mail = async (user) => {
                   <p><strong>Address:</strong> ${user.address}</p>
                   <p><strong>Mobile No.:</strong> ${user.mobile}</p>
                   <p><strong>Email ID:</strong> ${user.email}</p>
-
                   <h3>Login Details</h3>
                   <p><strong>Login ID/Document No.:</strong> ${user.documentNumber}</p>
                   <p><strong>Password:</strong> ${user.mobile}</p>
-
                   <p>For more details, visit our website:</p>
                   <p><a href="https://www.valmodelivery.com" style="color: blue;">www.valmodelivery.com</a></p>
-
                   <p style="text-align: center; font-weight: bold;">Best Regards, <br> Valmo Logistics Franchisee Development Team</p>
               </div>
           </div>
@@ -1547,7 +1541,7 @@ const sendProposalMailFromUser = async (user, manager) => {
       user: "hello@valmodelivery.com",
       pass: "sanjay@9523" // Replace with actual email password
     },
-     
+
   });
 
   const mailOptions = {
