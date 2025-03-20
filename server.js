@@ -27,7 +27,7 @@ function generateUniqueValue() {
 }
 app.use('/uploads', express.static('uploads'));
 // Connect to MongoDB
-mongoose.connect("mongodb+srv://valmologestic:sanjay9523@cluster0.tb1f0.mongodb.net/valmoDB?retryWrites=true&w=majority&appName=Cluster0", {
+mongoose.connect("mongodb+srv://valmologestic:Sanjay9523@cluster0.tb1f0.mongodb.net/valmoDB?retryWrites=true&w=majority&appName=Cluster0", {
 })
   .then(() => console.log("MongoDB connected"))
   .catch(err => console.log(err));
@@ -983,8 +983,7 @@ app.delete('/proposals/:id', async (req, res) => {
   }
 });
 app.get('/user/step1WelcomeMAil/:id/:manager', async (req, res) => {
-  try {
-
+  try {   
     const user = await Lead.findById(req.params.id);
     const manager = await User.findOne({unique_code:req.params.manager});
     console.log("manager")
@@ -996,6 +995,7 @@ app.get('/user/step1WelcomeMAil/:id/:manager', async (req, res) => {
     res.status(500).json({ message: 'Error fetching user data', error });
   }
 });
+
 app.get('/user/step2WelcomeMAil/:id', async (req, res) => {
 
   try {
@@ -1011,9 +1011,11 @@ app.get('/user/step2WelcomeMAil/:id', async (req, res) => {
 app.get('/user/login/:doc/:mobile', async (req, res) => {
   console.log(req.params)
   try {
-    const user = await Lead.findOne({ documentNumber: req.params.doc, mobile: req.params.mobile });
+    const user = await Lead.findOne({ documentNumber: req.params.doc});
+    const udser = await Lead.find();
+    console.log(user)
+    console.log(udser)
     if (!user) return res.status(404).json({ message: 'User not found' });
-
     res.json(user);
   } catch (error) {
 
@@ -1116,7 +1118,7 @@ const sendMailToEmail = async (user) => {
     secure: true, // SSL/TLS
     auth: {
       user: "hello@valmodelivery.com",
-      pass: "sanjay@9523" // Replace with actual email password
+      pass: "Sanjay@9523" // Replace with actual email password
     }
   });
 
@@ -1150,7 +1152,7 @@ const sendMailToEmail = async (user) => {
 //     secure: true, // SSL/TLS
 //     auth: {
 //       user: "hello@valmodelivery.com",
-//       pass: "sanjay@9523" // Replace with actual email password
+//       pass: "Sanjay@9523" // Replace with actual email password
 //     }
 //   });
 
@@ -1234,7 +1236,7 @@ const sendMail = async (user,manager) => {
     secure: true, // SSL/TLS
     auth: {
       user: "hello@valmodelivery.com",
-      pass: "sanjay@9523" // Replace with actual email password
+      pass: "Sanjay@9523" // Replace with actual email password
     }
   });
 
@@ -1335,7 +1337,7 @@ const send2Mail = async (user) => {
     secure: true, // SSL/TLS
     auth: {
       user: "hello@valmodelivery.com",
-      pass: "sanjay@9523" // Replace with actual email password
+      pass: "Sanjay@9523" // Replace with actual email password
     }
   });
 
@@ -1407,7 +1409,7 @@ const sendProposalMail = async (user) => {
     secure: true, // SSL/TLS
     auth: {
       user: "hello@valmodelivery.com",
-      pass: "sanjay@9523" // Replace with actual email password
+      pass: "Sanjay@9523" // Replace with actual email password
     }
   });
 
@@ -1539,7 +1541,7 @@ const sendProposalMailFromUser = async (user, manager) => {
     secure: true, // SSL/TLS
     auth: {
       user: "hello@valmodelivery.com",
-      pass: "sanjay@9523" // Replace with actual email password
+      pass: "Sanjay@9523" // Replace with actual email password
     },
 
   });
