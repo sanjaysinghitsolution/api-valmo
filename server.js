@@ -1550,107 +1550,273 @@ const sendProposalMailFromUser = async (user, manager) => {
     from: '"Valmo Logistics" <hello@valmodelivery.com>',
     to: user.email,
     subject: "Proposal for Valmo Logistics Partnership – Preferred Location and PIN Code Availability",
+    // html: `
+    //   <div style="font-family: Arial, sans-serif; color: #333; padding: 20px; max-width: 800px; margin: 0 auto;">
+    //     <h2 style="color: #1E88E5;">Dear ${user.name},</h2>
+    //     <p>Greetings from Valmo!</p>
+    //     <p>We are India’s most reliable and cost-effective logistics service partner, committed to streamlining logistics and ensuring a smooth and efficient delivery experience at the lowest cost.</p>
+    //     <p>We are pleased to inform you that your preferred PIN code and location are available for a Valmo franchise partnership. This is a great opportunity to collaborate with one of India's fastest-growing logistics companies.</p>
+
+    //     <h3 style="color: #1E88E5;">Why Partner with Valmo?</h3>
+    //     <ul style="list-style-type: none; padding-left: 0;">
+    //       <li>9+ lakh orders shipped daily</li>
+    //       <li>30,000+ delivery executives</li>
+    //       <li>3,000+ partners</li>
+    //       <li>6,000+ PIN codes served</li>
+    //     </ul>
+
+    //     ${user.pincodes.map((details, idx) => ` <div> <h3 style="color: #1E88E5;">Preferred Location & PIN Code Availability ${idx + 1} :</h3>
+    //   <p><strong>PIN Code Availability:</strong> ${details.pincode}</p>
+    //   <p><strong>Location Availability:</strong></p>
+    //   <ul>
+    //     ${details.post_offices.map((post_office) => `<li>${post_office}</li>`).join("")}
+    //   </ul> </div>`)}
+
+    //     <h3 style="color: #1E88E5;">Franchise Opportunities & Earnings</h3>
+    //     <p><strong>Delivery Franchise:</strong> ₹30 per Shipment (300 products daily commitment)</p>
+        
+    //     <p><strong>Profit Margin:</strong> 25-30%</p>
+    //     <p><strong>Annual Profit Potential:</strong> ₹10-15 lakh per annum</p>
+
+    //     <h3 style="color: #1E88E5;">Company Support Includes:</h3>
+    //     <ul>
+    //       <li>Comprehensive training for franchise owners & staff</li>
+    //       <li>Advanced software & order tracking tools</li>
+    //       <li>Barcode scanner, fingerprint scanner</li>
+    //       <li>Marketing materials (banners, posters, etc.)</li>
+    //       <li>Doorstep stock delivery</li>
+    //       <li>Vehicles for shipment & delivery</li>
+    //       <li>Loading & unloading support</li>
+    //     </ul>
+
+    //     <h3 style="color: #1E88E5;">Company Benefits for Franchise Partners:</h3>
+    //     <ul>
+    //       <li>Company pays salary for 3 employees</li>
+    //       <li>50% rent & electricity bill covered</li>
+    //       <li>Company-designed interiors</li>
+    //       <li>All necessary products & equipment provided</li>
+    //       <li>Space requirement: 200-500 sq. ft.</li>
+    //     </ul>
+
+    //     <h3 style="color: #1E88E5;">Investment & Financial Information</h3>
+    //     <p><strong>Registration Fee:</strong> ₹18600 </p>
+    //     <p><strong>Security Money:</strong> 90% refundable after the agreement</p>
+    //     <p><strong>Interest Earned on Security Deposit:</strong> 7.5% annually</p>
+    //     <p><strong>Interest Calculation Example:</strong> ₹2,00,000 × 7.5% × 1 year = ₹15,000 per annum</p>
+    //     <p><strong>One-time Setup Fee:</strong> ₹2,00,000 (lifetime investment)</p>
+    //     <p><strong>Agreement Fee:</strong> ₹90,100 (fully refundable)</p>
+    //     <p><strong>Total Payment:</strong> ₹3,08,700 (refundable except for registration fee)</p>
+
+    //     <h3 style="color: #1E88E5;">Required Documents:</h3>
+    //     <ul>
+    //       <li>Aadhar card/Voter ID Card</li>
+    //       <li>PAN Card</li>
+    //       <li>Bank Account Details</li>
+    //       <li>Location images & details</li>
+    //       <li>One passport-size photograph</li>
+    //     </ul>
+
+    //     <p>We believe this partnership will be mutually beneficial, and we are excited about the possibility of collaborating with you.</p>
+
+    //     <h3 style="color: #1E88E5;">To Proceed with This Opportunity:</h3>
+    //     <ol>
+    //       <li>Kindly fill out the attached application form.</li>
+    //       <li>Please also attach the necessary documents mentioned above and send them back to us via email at <a href="mailto:hello@valmodelivery.com">hello@valmodelivery.com</a>.</li>
+    //     </ol>
+
+    //     <p>Additionally, I have attached Valmo Franchisee Prospects for your reference. These documents will provide you with further insights into our business and partnership details.</p>
+
+    //     <p>Our Business Development Team is available for any questions or additional information you may need. You can also reach us at:</p>
+    //     <ul>
+    //       <li>📧 <a href="mailto:hello@valmodelivery.com">hello@valmodelivery.com</a></li>
+    //       <li>📞 ${manager.mobile}</li>
+    //       <li>🌐 <a href="http://www.valmodelivery.com">www.valmodelivery.com</a></li>
+    //     </ul>
+
+    //     <p><strong>Office Address:</strong><br>
+    //     3rd Floor, Wing-E, Helios Business Park, Kadubeesanahalli Village, Varthur Hobli, Outer Ring Road, Bellandur, Bangalore South, Karnataka, India, 560103</p>
+
+    //     <p>We look forward to your response and the opportunity to collaborate.</p>
+
+    //     <p>Best regards,<br>
+    //     ${manager.name}<br>
+    //     Business Development Team<br>
+    //     Valmo Logistics<br>
+    //     📧 <a href="mailto:hello@valmodelivery.com">hello@valmodelivery.com</a><br>
+    //     📞 ${manager.mobile}</p>
+
+    //     <p style="font-size: 12px; color: #888; margin-top: 20px;">
+    //       <strong>Disclaimer:</strong><br>
+    //       This email and its attachments are intended for the recipient(s) named above and may contain confidential or privileged information. If you are not the intended recipient, please notify the sender immediately by replying to this email and deleting it from your system. Any unauthorized use, disclosure, or distribution of this communication is prohibited. Valmo Logistics does not accept any responsibility for any loss or damage caused by the use of this email or its attachments.
+    //     </p>
+    //   </div>
+    // `,
+    
     html: `
-      <div style="font-family: Arial, sans-serif; color: #333; padding: 20px; max-width: 800px; margin: 0 auto;">
-        <h2 style="color: #1E88E5;">Dear ${user.name},</h2>
-        <p>Greetings from Valmo!</p>
-        <p>We are India’s most reliable and cost-effective logistics service partner, committed to streamlining logistics and ensuring a smooth and efficient delivery experience at the lowest cost.</p>
-        <p>We are pleased to inform you that your preferred PIN code and location are available for a Valmo franchise partnership. This is a great opportunity to collaborate with one of India's fastest-growing logistics companies.</p>
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valmo Logistics Franchise Opportunity 🚛</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        .content {
+            padding: 30px;
+        }
+        .content h2 {
+            color: #ff6b6b;
+            border-bottom: 2px solid #4ecdc4;
+            padding-bottom: 5px;
+        }
+        .content p {
+            line-height: 1.6;
+        }
+        .highlight {
+            background: #fff3f3;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .model-box {
+            background: #e6f3ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 25px;
+            background: #4ecdc4;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            margin: 10px 0;
+        }
+        .button:hover {
+            background: #ff6b6b;
+        }
+        .footer {
+            background: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+        }
+        .emoji {
+            font-size: 20px;
+            margin: 0 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Greetings from Valmo Logistics! 🚛📦</h1>
+        </div>
+        <div class="content">
+            <p>Dear ${user.name},</p>
+            <p>We are thrilled to announce that your preferred location and PIN code are available for a <strong>Valmo Franchise Partnership</strong>! 🎉 This is your chance to team up with one of India’s most reliable and cost-effective logistics partners. 🚚💼</p>
 
-        <h3 style="color: #1E88E5;">Why Partner with Valmo?</h3>
-        <ul style="list-style-type: none; padding-left: 0;">
-          <li>9+ lakh orders shipped daily</li>
-          <li>30,000+ delivery executives</li>
-          <li>3,000+ partners</li>
-          <li>6,000+ PIN codes served</li>
-        </ul>
+            <h2>Why Partner with Valmo? 🌟</h2>
+            <div class="highlight">
+                <p><span class="emoji">✅</span> 9+ lakh orders shipped daily</p>
+                <p><span class="emoji">✅</span> 30,000+ delivery executives</p>
+                <p><span class="emoji">✅</span> 3,000+ partners</p>
+                <p><span class="emoji">✅</span> 6,000+ PIN codes served</p>
+            </div>
 
-        ${user.pincodes.map((details, idx) => ` <div> <h3 style="color: #1E88E5;">Preferred Location & PIN Code Availability ${idx + 1} :</h3>
+             ${user.pincodes.map((details, idx) => ` <div> <h3 style="color: #1E88E5;">Preferred Location & PIN Code Availability ${idx + 1} :</h3>
       <p><strong>PIN Code Availability:</strong> ${details.pincode}</p>
       <p><strong>Location Availability:</strong></p>
       <ul>
         ${details.post_offices.map((post_office) => `<li>${post_office}</li>`).join("")}
       </ul> </div>`)}
 
-        <h3 style="color: #1E88E5;">Franchise Opportunities & Earnings</h3>
-        <p><strong>Delivery Franchise:</strong> ₹30 per Shipment (300 products daily commitment)</p>
-        
-        <p><strong>Profit Margin:</strong> 25-30%</p>
-        <p><strong>Annual Profit Potential:</strong> ₹10-15 lakh per annum</p>
+            <h2>Franchise Opportunities & Earnings 💰</h2>
+            <p>We offer two exciting franchise models:</p>
 
-        <h3 style="color: #1E88E5;">Company Support Includes:</h3>
-        <ul>
-          <li>Comprehensive training for franchise owners & staff</li>
-          <li>Advanced software & order tracking tools</li>
-          <li>Barcode scanner, fingerprint scanner</li>
-          <li>Marketing materials (banners, posters, etc.)</li>
-          <li>Doorstep stock delivery</li>
-          <li>Vehicles for shipment & delivery</li>
-          <li>Loading & unloading support</li>
-        </ul>
+            <div class="model-box">
+                <h3>1. Basic Model 💼</h3>
+                <p><strong>Total Investment:</strong> ₹1,08,700</p>
+                <p><span class="emoji">💸</span> ₹18,600 as registration charge for PIN code booking</p>
+                <p><span class="emoji">💸</span> ₹90,100 as agreement fee (fully refundable within 90 days)</p>
+                <p><em>Includes login credentials for our logistics management software.</em></p>
+                <p><strong>Earnings:</strong></p>
+                <p><span class="emoji">💰</span> ₹30 per shipment (300 products/day commitment)</p>
+                <p><span class="emoji">💰</span> ₹7 per parcel if cancelled at your warehouse</p>
+                <p><span class="emoji">💰</span> ₹15 per parcel if customer cancels on doorstep</p>
+            </div>
 
-        <h3 style="color: #1E88E5;">Company Benefits for Franchise Partners:</h3>
-        <ul>
-          <li>Company pays salary for 3 employees</li>
-          <li>50% rent & electricity bill covered</li>
-          <li>Company-designed interiors</li>
-          <li>All necessary products & equipment provided</li>
-          <li>Space requirement: 200-500 sq. ft.</li>
-        </ul>
+            <div class="model-box">
+                <h3>2. FOCO Model (Full Company Ownership) 🚚</h3>
+                <p><strong>Total Investment:</strong> ₹3,08,700</p>
+                <p><span class="emoji">💸</span> ₹18,600 as registration charge for PIN code booking</p>
+                <p><span class="emoji">💸</span> ₹90,100 as agreement fee (fully refundable within 90 days)</p>
+                <p><span class="emoji">💸</span> ₹2,00,000 as security deposit (refundable on exit)</p>
+                <p><strong>Earnings:</strong></p>
+                <p><span class="emoji">💰</span> ₹30 per shipment (300 products/day commitment)</p>
+                <p><span class="emoji">💰</span> ₹7 per parcel if cancelled at your warehouse</p>
+                <p><span class="emoji">💰</span> ₹15 per parcel if customer cancels on doorstep</p>
+                <p><strong>Additional Benefits:</strong></p>
+                <p><span class="emoji">👷</span> 3 employees provided by Valmo (salaries ~₹15,000/month each)</p>
+                <p><span class="emoji">🏢</span> 50% rent & electricity bill covered</p>
+                <p><span class="emoji">🖼️</span> Company-designed office interiors</p>
+                <p><span class="emoji">🛠️</span> Barcode machine + 3 laptops with accessories</p>
+            </div>
 
-        <h3 style="color: #1E88E5;">Investment & Financial Information</h3>
-        <p><strong>Registration Fee:</strong> ₹18600 </p>
-        <p><strong>Security Money:</strong> 90% refundable after the agreement</p>
-        <p><strong>Interest Earned on Security Deposit:</strong> 7.5% annually</p>
-        <p><strong>Interest Calculation Example:</strong> ₹2,00,000 × 7.5% × 1 year = ₹15,000 per annum</p>
-        <p><strong>One-time Setup Fee:</strong> ₹2,00,000 (lifetime investment)</p>
-        <p><strong>Agreement Fee:</strong> ₹90,100 (fully refundable)</p>
-        <p><strong>Total Payment:</strong> ₹3,08,700 (refundable except for registration fee)</p>
+            <h2>Required Documents 📜</h2>
+            <p><span class="emoji">🖌️</span> Aadhar Card/Voter ID</p>
+            <p><span class="emoji">🖌️</span> PAN Card</p>
+            <p><span class="emoji">🖌️</span> Bank Account Details</p>
+            <p><span class="emoji">🖌️</span> Location Images</p>
+            <p><span class="emoji">🖌️</span> Passport-size Photograph</p>
 
-        <h3 style="color: #1E88E5;">Required Documents:</h3>
-        <ul>
-          <li>Aadhar card/Voter ID Card</li>
-          <li>PAN Card</li>
-          <li>Bank Account Details</li>
-          <li>Location images & details</li>
-          <li>One passport-size photograph</li>
-        </ul>
+            <h2>How to Proceed? 🚀</h2>
+            <p>Please fill out the application form, attach the required documents, and send them to:</p>
+            <p><span class="emoji">📧</span> <a href="mailto:hello@valmodelivery.com">hello@valmodelivery.com</a></p>
+            <p><em>Login credentials for Valmo Logistics Management Software will be shared upon application receipt.</em></p>
 
-        <p>We believe this partnership will be mutually beneficial, and we are excited about the possibility of collaborating with you.</p>
+            <a href="mailto:hello@valmodelivery.com" class="button">Apply Now! 🎯</a>
+        </div>
 
-        <h3 style="color: #1E88E5;">To Proceed with This Opportunity:</h3>
-        <ol>
-          <li>Kindly fill out the attached application form.</li>
-          <li>Please also attach the necessary documents mentioned above and send them back to us via email at <a href="mailto:hello@valmodelivery.com">hello@valmodelivery.com</a>.</li>
-        </ol>
-
-        <p>Additionally, I have attached Valmo Franchisee Prospects for your reference. These documents will provide you with further insights into our business and partnership details.</p>
-
-        <p>Our Business Development Team is available for any questions or additional information you may need. You can also reach us at:</p>
-        <ul>
-          <li>📧 <a href="mailto:hello@valmodelivery.com">hello@valmodelivery.com</a></li>
-          <li>📞 ${manager.mobile}</li>
-          <li>🌐 <a href="http://www.valmodelivery.com">www.valmodelivery.com</a></li>
-        </ul>
-
-        <p><strong>Office Address:</strong><br>
-        3rd Floor, Wing-E, Helios Business Park, Kadubeesanahalli Village, Varthur Hobli, Outer Ring Road, Bellandur, Bangalore South, Karnataka, India, 560103</p>
-
-        <p>We look forward to your response and the opportunity to collaborate.</p>
-
-        <p>Best regards,<br>
-        ${manager.name}<br>
-        Business Development Team<br>
-        Valmo Logistics<br>
-        📧 <a href="mailto:hello@valmodelivery.com">hello@valmodelivery.com</a><br>
-        📞 ${manager.mobile}</p>
-
-        <p style="font-size: 12px; color: #888; margin-top: 20px;">
-          <strong>Disclaimer:</strong><br>
-          This email and its attachments are intended for the recipient(s) named above and may contain confidential or privileged information. If you are not the intended recipient, please notify the sender immediately by replying to this email and deleting it from your system. Any unauthorized use, disclosure, or distribution of this communication is prohibited. Valmo Logistics does not accept any responsibility for any loss or damage caused by the use of this email or its attachments.
-        </p>
-      </div>
+        <div class="footer">
+            <p><strong>For More Details, Contact Us:</strong></p>
+            <p><span class="emoji">📞</span> ${manager.mobile} | <span class="emoji">📧</span> hello@valmodelivery.com | <span class="emoji">🌐</span> www.valmodelivery.com</p>
+            <p><span class="emoji">📍</span> 3rd Floor, Wing-E, Helios Business Park, Kadubeesanahalli Village, Varthur Hobli, Outer Ring Road, Bellandur, Bangalore South, Karnataka, India, 560103</p>
+            <p>We’re excited to partner with you! 🤝</p>
+            <p><em>Best regards,<br>${manager.name}<br>Business Development Team<br>Valmo Logistics</em></p>
+            <p style="margin-top: 20px;">📢 <em>Email Disclaimer: This email is confidential. If you’re not the intended recipient, please delete it and notify us. Unauthorized use is prohibited. Valmo Logistics isn’t liable for errors due to email transmission.</em></p>
+        </div>
+    </div>
+</body>
+</html>
     `,
+    
     attachments: [
       {
         filename: "Valmo Application Form.pdf",
