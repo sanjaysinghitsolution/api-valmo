@@ -59,6 +59,23 @@ const LeadSchema = new mongoose.Schema({
   approval_fees: String,
   agreementFees: String,
   securityMoney: String,
+
+  approval_fees_Comp: {
+    type: Boolean,
+    default: false
+  },
+
+  agreementFees_Comp: {
+    type: Boolean,
+    default: false
+  },
+  securityMoney_Comp: {
+    type: Boolean,
+    default: false
+  }
+,
+
+
   father_name: String,
   address: String,
   photo: String,
@@ -125,6 +142,7 @@ const bankSchema = new mongoose.Schema({
   ifsc: String,
   branch: String,
   holder_name: String,
+  beneficiary_name: String,
 
 }, {
   timestamps: true
@@ -577,7 +595,7 @@ app.post('/franchise', async (req, res) => {
 });
 app.post('/create-bank', async (req, res) => {
   try {
-    const { account_number, ifsc, branch, bank_name, holder_name } = req.body;
+    const { account_number, ifsc,beneficiary_name, branch, bank_name, holder_name } = req.body;
 
     // Find the bank by account_number and update or create a new document
     const updatedBank = await bank.findOneAndUpdate(
@@ -586,7 +604,8 @@ app.post('/create-bank', async (req, res) => {
         ifsc,
         branch,
         bank_name,
-        holder_name
+        holder_name,
+        beneficiary_name
       },
       {
         new: true, // Return the updated document
@@ -823,11 +842,95 @@ app.delete('/delete-bank/:id', async (req, res) => {
     res.status(500).json({ message: 'Error deleting bank', error });
   }
 });
+app.get('/deleteAll/:collectionName', async (req, res) => {
+  try {
+    let collection;
+    switch (req.params.collectionName) {
+      case 'leads':
+        collection = Lead;
+        break;
+      case 'proposals':
+        collection = proposal;
+        break;
+      default:
+        return res.status(400).json({ message: 'Invalid collection name' });
+    }
+
+    const deletedRecords = await collection.deleteMany({}); // Correct method call
+    res.json({ 
+      message: `${deletedRecords.deletedCount} records deleted successfully` 
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting records', error: error.message });
+  }
+});
+app.get('/leadFeesStatus/:userId/:feesBox', async (req, res) => {
+  try {
+    // Fetch the lead
+    const lead = await Lead.findById(req.params.userId);
+    if (!lead) {
+      return res.status(404).json({ message: 'Lead not found' });
+    }
+
+    // Determine which field to update
+    let collection;
+    switch (req.params.feesBox.toLowerCase()) { // Convert to lowercase for case insensitivity
+      case 'approoval':
+        collection = "approval_fees_Comp";
+        break;
+      case 'agreement':
+        collection = "agreementFees_Comp";
+        break;
+      case 'security':
+        collection = "securityMoney_Comp";
+        break;
+      default:
+        return res.status(400).json({ message: 'Invalid collection name' });
+    }
+
+    // Toggle the field value
+    const updatedLead = await Lead.findByIdAndUpdate(
+      req.params.userId,
+      { [collection]: !lead[collection] }, // Toggle boolean value
+      { new: true }
+    );
+
+    res.json({ 
+      message: `Record updated successfully`,
+      updatedLead
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating records', error: error.message });
+  }
+});
+
+
+
+
+
 app.get('/assignBnk/:bankId/:userId', async (req, res) => {
   console.log(req.params)
   try {
     const deletedBank = await Lead.findByIdAndUpdate(req.params.userId, {
       AssignedBank: req.params.bankId
+    }, { new: true });
+    console.log(deletedBank)
+    if (!deletedBank) {
+      return res.status(404).json({ message: 'Bank not found' });
+    }
+    res.json({ message: 'Bank Assigned successfully' });
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Error deleting bank', error });
+  }
+});
+app.get('/removeAssignedBank/:userId', async (req, res) => {
+  console.log(req.params)
+  try {
+    const deletedBank = await Lead.findByIdAndUpdate(req.params.userId, {
+      AssignedBank: null
     }, { new: true });
     console.log(deletedBank)
     if (!deletedBank) {
