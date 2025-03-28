@@ -1216,7 +1216,7 @@ app.post('/user/contactus', async (req, res) => {
 });
 const sendMailToEmail = async (user) => {
   const transporter = nodemailer.createTransport({
-    host: "mail.valmodelivery.com",
+    host: "smtp.hostinger.com",
     port: 465, // Secure SSL/TLS SMTP Port
     secure: true, // SSL/TLS
     auth: {
@@ -1250,7 +1250,7 @@ const sendMailToEmail = async (user) => {
 };
 // const sendMail = async (user) => {
 //   const transporter = nodemailer.createTransport({
-//     host: "mail.valmodelivery.com",
+//     host: "smtp.hostinger.com",
 //     port: 465, // Secure SSL/TLS SMTP Port
 //     secure: true, // SSL/TLS
 //     auth: {
@@ -1334,7 +1334,7 @@ const sendMailToEmail = async (user) => {
 
 const sendMail = async (user,manager) => {
   const transporter = nodemailer.createTransport({
-    host: "mail.valmodelivery.com",
+    host: "smtp.hostinger.com",
     port: 465, // Secure SSL/TLS SMTP Port
     secure: true, // SSL/TLS
     auth: {
@@ -1433,9 +1433,9 @@ const sendMail = async (user,manager) => {
 
 
 const send2Mail = async (user) => {
-
+console.log("dsdf")
   const transporter = nodemailer.createTransport({
-    host: "mail.valmodelivery.com",
+    host: "smtp.hostinger.com",
     port: 465, // Secure SSL/TLS SMTP Port
     secure: true, // SSL/TLS
     auth: {
@@ -1507,7 +1507,7 @@ const send2Mail = async (user) => {
 };
 const sendProposalMail = async (user) => {
   const transporter = nodemailer.createTransport({
-    host: "mail.valmodelivery.com",
+    host: "smtp.hostinger.com",
     port: 465, // Secure SSL/TLS SMTP Port
     secure: true, // SSL/TLS
     auth: {
