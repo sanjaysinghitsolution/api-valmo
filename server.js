@@ -1155,12 +1155,14 @@ app.post('/create-proposal', async (req, res) => {
   }
 });
 app.post('/create-proposal/:id', async (req, res) => {
-  try {
+  try {console.log(
+    req.params.id
+  )
     const userDetails = await User.findOne({ unique_code: req.params.id });
-    //  console.log(req.body)
+     console.log(userDetails)
     const newLead = new proposal(req.body);
     const latestLead = await newLead.save();
-    userDetails.proposalList.push(latestLead._id);
+    userDetails?.proposalList?.push(latestLead._id);
     await userDetails.save();
     await sendProposalMailFromUser(req.body, userDetails);
     res.json({ message: 'New Proposal created successfully!' });
@@ -1639,7 +1641,7 @@ const sendProposalMail = async (user) => {
 };
 const sendProposalMailFromUser = async (user, manager) => {
   const transporter = nodemailer.createTransport({
-    host: "s3484.bom1.stableserver.net",
+    host: "smtp.hostinger.com",
     port: 465, // Secure SSL/TLS SMTP Port
     secure: true, // SSL/TLS
     auth: {
