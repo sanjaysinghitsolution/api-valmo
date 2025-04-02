@@ -31,6 +31,114 @@ mongoose.connect("mongodb+srv://valmologestic:sanjay9523@cluster0.tb1f0.mongodb.
 })
   .then(() => console.log("MongoDB connected"))
   .catch(err => console.log(err));
+
+
+
+
+
+
+  const ApplicationSchema = new mongoose.Schema({
+    applicationNumber: String,
+    applicationDate: String,
+    fullName: String,
+    user:String,
+    fatherHusbandName: String,
+    dob: String,
+    selectedModal:String,
+    passportNumber: String,
+    fileInput: String,
+    aadhaarInput: String,
+    panInput: String,
+    bankInput: String,
+    nationality: String,
+    mobileNumber: String,
+    alternateMobileNumber: String,
+    email: String,
+    houseStreet: String,
+    resDistrict: String,
+    resState: String,
+    resPinCode: String,
+    businessName: String,
+    gstNumber: String,
+    employeesCount: String,
+    officeAddress: String,
+    officeDistrict: String,
+    officeState: String,
+    officePinCode: String,
+    franchisePinCode: String,
+    totalSpace: String,
+    warehouseSpace: String,
+    expectedRevenue: String,
+    bankName: String,
+    bankBranch: String,
+    accountHolder: String,
+    accountNumber: String,
+    ifscCode: String,
+    upiId: String,
+    franchiseCompany: String,
+    disputesDetails: String,
+    ref1Name: String,
+    ref1Contact: String,
+    ref1Relationship: String,
+    ref2Name: String,
+    ref2Contact: String,
+    ref2Relationship: String,
+    professionalBackground: String,
+    certifications: String,
+    experienceDetails: String,
+    staffCount: String,
+    remarks: String,
+    reviewedBy: String,
+    reviewerSignature: String,
+    reviewDate: String,
+    investmentBelow5: String,
+    investment5to10: String,
+    investment10to20: String,
+    investmentAbove20: String,
+    sourceSelf: String,
+    sourceLoan: String,
+    sourcePartner: String,
+    sourceOther: String,
+    loansYes: String,
+    loansNo: String,
+    vehiclesYes: String,
+    vehiclesNo: String,
+    logisticsFamiliarYes: String,
+    logisticsFamiliarNo: String,
+    qual10th: String,
+    qual12th: String,
+    qualDiploma: String,
+    qualGraduate: String,
+    qualPostgraduate: String,
+    qualOther: String,
+    franchiseYes: String,
+    franchiseNo: String,
+    disputesYes: String,
+    disputesNo: String,
+    experienceYes: String,
+    experienceNo: String,
+    statusApproved: String,
+    statusRejected: String,
+    statusUnderReview: String,
+    thebusinesspremises: String,
+    ParkingFacilityAvailable: String,
+    OfficeSetupAvailability: String,
+    typeOfBusiness: String,
+    PreferredModeofCommunication: String,
+    maritalStatus: String,
+    gender: String
+  });
+  
+  
+  const apkForm = mongoose.model('Application', ApplicationSchema);
+
+
+
+
+
+
+
+
 // Define Schema and Model
 const LeadSchema = new mongoose.Schema({
   username: String,
@@ -1937,6 +2045,104 @@ const sendProposalMailFromUser = async (user, manager) => {
   await transporter.sendMail(mailOptions);
   console.log("Email sent successfully to", user.email);
 };
+
+
+const st = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadDir = 'uploads/';
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const up = multer({ storage: st });
+
+app.post('/submit-application', upload.fields([
+  { name: 'aadhaarInput', maxCount: 1 },
+  { name: 'panInput', maxCount: 1 },
+  { name: 'bankInput', maxCount: 1 },
+  { name: 'fileInput', maxCount: 1 }
+]), async (req, res) => {
+ 
+  try {
+    const files = req.files;
+   
+    // Map checkbox values to boolean
+     
+
+    // Create new application
+    const application = new apkForm({ 
+      ...req.body,
+      fileInput: req.files?.fileInput[0]?.filename,
+      aadhaarInput: req.files?.aadhaarInput[0]?.filename,
+      panInput: req.files?.panInput[0]?.filename,
+      bankInput: req.files?.bankInput[0]?.filename,
+      
+
+    });
+
+    // Save to database
+    await application.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Application submitted successfully',
+      data: application
+    });
+  } catch (error) {
+    console.error('Error submitting application:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to submit application',
+      error: error.message
+    });
+  }
+});
+
+
+app.get('/getFormApplication', async (req, res) => {
+  try {
+    const application = await apkForm.find()
+    res.status(200).json(application);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+})
+app.get('/getFormApplicationByManager/:user', async (req, res) => {
+  try {
+    const application = await apkForm.find({user:req.params.user})
+    res.status(200).json(application);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+})
+app.get('/deleteApplication/:id', async (req, res) => {
+  try {
+    const application = await apkForm.findByIdAndDelete(req.params.id)
+    res.status(200).json(application);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+})
+
+  
+  
+
+
+
+
+
+
+
+
+
+
 app.post("/admin/login", async (req, res) => {
   const { username, password } = req.body;
 
