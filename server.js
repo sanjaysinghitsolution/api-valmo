@@ -118,6 +118,7 @@ mongoose.connect("mongodb+srv://valmologestic:sanjay9523@cluster0.tb1f0.mongodb.
     experienceYes: String,
     experienceNo: String,
     statusApproved: String,
+    aadhaarBackInput:String,
     statusRejected: String,
     statusUnderReview: String,
     thebusinesspremises: String,
@@ -2065,6 +2066,7 @@ const up = multer({ storage: st });
 
 app.post('/submit-application', upload.fields([
   { name: 'aadhaarInput', maxCount: 1 },
+  { name: 'aadhaarBackInput', maxCount: 1 },
   { name: 'panInput', maxCount: 1 },
   { name: 'bankInput', maxCount: 1 },
   { name: 'fileInput', maxCount: 1 }
@@ -2072,17 +2074,18 @@ app.post('/submit-application', upload.fields([
  
   try {
     const files = req.files;
-   
+   console.log(files)
     // Map checkbox values to boolean
      
 
     // Create new application
     const application = new apkForm({ 
       ...req.body,
-      fileInput: req.files?.fileInput[0]?.filename,
-      aadhaarInput: req.files?.aadhaarInput[0]?.filename,
-      panInput: req.files?.panInput[0]?.filename,
-      bankInput: req.files?.bankInput[0]?.filename,
+      fileInput:req.files?.fileInput.lenght > 0 &&  req.files?.fileInput[0]?.filename,
+      aadhaarInput:req.files?.aadhaarInput.length > 0 && req.files?.aadhaarInput[0]?.filename,
+      panInput:req.files?.panInput.length > 0 && req.files?.panInput[0]?.filename,
+      bankInput:req.files?.bankInput.length > 0 && req.files?.bankInput[0]?.filename,
+      aadhaarBackInput:req.files?.aadhaarBackInput.length > 0 &&  req.files?.aadhaarBackInput[0]?.filename,
       
 
     });
