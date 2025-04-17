@@ -652,6 +652,32 @@ const personalMailedFormSchema = new mongoose.Schema({
   statusApproved: Boolean,
   statusRejected: Boolean,
   statusUnderReview: Boolean,
+  isBlocked:{
+    type:Boolean,
+    default:false
+  },
+  bankRemark:{
+    type:String,  
+    default:""
+  },
+  bankQr:{
+    type:String,  
+    default:""
+  },
+
+  approvalNote:{
+    type:String,  
+    default:""
+  },
+  agreementNote:{
+    type:String,  
+    default:""
+  },
+
+
+
+
+
 
   thebusinesspremises: String,
   ParkingFacilityAvailable: String,
