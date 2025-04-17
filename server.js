@@ -41,7 +41,7 @@ const LeadSchema = new mongoose.Schema({
   follow1: {
     type: Boolean,
     default: false
-  }, 
+  },
   follow2: {
     type: Boolean,
     default: false
@@ -554,78 +554,115 @@ const st = multer.diskStorage({
 
 const updload = multer({ storage: st });
 
-const simpleSchema = new mongoose.Schema({
+const personalMailedFormSchema = new mongoose.Schema({
+  user: String,
+  selectedModal: String,
+
+  // File paths
+  fileInput: String,
+  aadhaarInput: String,
+  aadhaarBackInput: String,
+  panInput: String,
+  bankInput: String,
+
+  // Text fields
+  applicationNumber: String,
+  applicationDate: String,
   fullName: String,
   fatherHusbandName: String,
   dob: String,
-  gender: String,
-  mobile: String,
-  alternateMobile: String,
+  passportNumber: String,
+  nationality: String,
+  mobileNumber: String,
+  alternateMobileNumber: String,
   email: String,
-  maritalStatus: String,
-  permanentAddress: String,
-  city: String,
-  state: String,
-  pincode: String,
-  propertyType: String,
-  otherPropertyType: String,
-  propertyAddress: String,
-  propertyArea: String,
-  roadFacing: String,
-  roadWidth: String,
-  propertyOwnership: String,
-  electricity: String,
-  waterSupply: String,
-  landmark: String,
-  crowdedArea: String,
-  powerBackup: String,
-  nightSecurity: String,
-  cctv: String,
+  houseStreet: String,
+  resDistrict: String,
+  resState: String,
+  resPinCode: String,
+  businessName: String,
+  gstNumber: String,
+  employeesCount: String,
+  officeAddress: String,
+  officeDistrict: String,
+  officeState: String,
+  officePinCode: String,
+  franchisePinCode: String,
+  totalSpace: String,
+  warehouseSpace: String,
+  expectedRevenue: String,
   bankName: String,
-  branchName: String,
-  accountHolderName: String,
+  bankBranch: String,
+  accountHolder: String,
   accountNumber: String,
   ifscCode: String,
-  aadhar: String,
-  backAdharCard: String,
-  panCard: String,
-  propertyDocuments: String,
-  bankProof: String,
-  photo: String,
-  password: {
-    type: String,
-    default: () => {
-      return Math.floor(1000 + Math.random() * 9000).toString();
-    }
-  },
-  isBlocked:{
-    type:Boolean,
-    default:false
-  },
-  bankRemark:{
-    type:String,  
-    default:""
-  },
-  bankQr:{
-    type:String,  
-    default:""
-  },
-  accountType: String,
   upiId: String,
-  approvalNote:{
-    type:String,  
-    default:""
-  },
-  agreementNote:{
-    type:String,  
-    default:""
-  },
+  franchiseCompany: String,
+  disputesDetails: String,
+  ref1Name: String,
+  ref1Contact: String,
+  ref1Relationship: String,
+  ref2Name: String,
+  ref2Contact: String,
+  ref2Relationship: String,
+  professionalBackground: String,
+  certifications: String,
+  experienceDetails: String,
+  staffCount: String,
+  remarks: String,
+  reviewedBy: String,
+  reviewerSignature: String,
+  reviewDate: String,
 
-  applicantSignature: String,
-  signatureDate: String
-});
+  // Checkboxes and conditionals
+  investmentBelow5: Boolean,
+  investment5to10: Boolean,
+  investment10to20: Boolean,
+  investmentAbove20: Boolean,
 
-const personalMailedForm = mongoose.model('personalMailedForm', simpleSchema);
+  sourceSelf: Boolean,
+  sourceLoan: Boolean,
+  sourcePartner: Boolean,
+  sourceOther: Boolean,
+   password:{
+    type: String,
+    default:Math.random().toString(36).substring(4)
+   },
+  loansYes: Boolean,
+  loansNo: Boolean,
+  vehiclesYes: Boolean,
+  vehiclesNo: Boolean,
+  logisticsFamiliarYes: Boolean,
+  logisticsFamiliarNo: Boolean,
+
+  qual10th: Boolean,
+  qual12th: Boolean,
+  qualDiploma: Boolean,
+  qualGraduate: Boolean,
+  qualPostgraduate: Boolean,
+  qualOther: Boolean,
+
+  franchiseYes: Boolean,
+  franchiseNo: Boolean,
+  disputesYes: Boolean,
+  disputesNo: Boolean,
+  experienceYes: Boolean,
+  experienceNo: Boolean,
+
+  statusApproved: Boolean,
+  statusRejected: Boolean,
+  statusUnderReview: Boolean,
+
+  thebusinesspremises: String,
+  ParkingFacilityAvailable: String,
+  OfficeSetupAvailability: String,
+  typeOfBusiness: String,
+  PreferredModeofCommunication: String,
+  maritalStatus: String,
+  gender: String
+}, { timestamps: true });
+
+const personalMailedForm = mongoose.model('personalMailedForm', personalMailedFormSchema);
 
 
 
@@ -640,12 +677,12 @@ app.post('/api/personal-application', upload.fields([
   { name: 'propertyDocuments', maxCount: 11 },
   { name: 'bankProof', maxCount: 11 },
   { name: 'photo', maxCount: 11 },
-]) ,async (req, res) => {
+]), async (req, res) => {
   try {
-  
 
- 
-   
+
+
+
     // Process the form data
     const formData = req.body;
 
@@ -688,6 +725,55 @@ app.post('/api/personal-application', upload.fields([
     });
   }
 });
+
+
+
+
+
+
+
+ 
+app.post("/submit-application", upload.fields([
+    { name: "fileInput" },
+    { name: "aadhaarInput" },
+    { name: "aadhaarBackInput" },
+    { name: "panInput" },
+    { name: "bankInput" }
+]), async (req, res) => {
+    try {
+        const body = req.body;
+       console.log(req.query)
+        // Append file paths
+        body.fileInput = req.files.fileInput?.[0]?.filename || "";
+        body.aadhaarInput = req.files.aadhaarInput?.[0]?.filename || "";
+        body.aadhaarBackInput = req.files.aadhaarBackInput?.[0]?.filename || "";
+        body.panInput = req.files.panInput?.[0]?.filename || "";
+        body.bankInput = req.files.bankInput?.[0]?.filename || "";
+
+        // Save to DB
+        const savedForm = await personalMailedForm.create(body);
+        // Update user with the new form reference
+        if (req.query.user) {
+            await User.findOneAndUpdate(
+                { unique_code: req.query.user },
+                { $push: { personalMailedForm: savedForm._id } }
+            );
+          
+        }
+
+        res.status(200).json({ message: "Form submitted successfully", data: savedForm });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Form submission failed" });
+    }
+});
+
+
+
+
+
+
+
 
 
 app.post('/franchise', async (req, res) => {
@@ -754,16 +840,15 @@ app.get('/usersList/:id', async (req, res) => {
     const leads = await personalMailedForm.find({ _id: { $in: user.personalMailedForm } }).sort({ createdAt: -1 });
     console.log(leads)
     res.json(leads);
-
   } catch (error) {
     res.status(500).json({ message: 'Error retrieving leads', error });
   }
 })
 app.get('/personalmaileddelete/:id', async (req, res) => {
   try {
-     const leads = await personalMailedForm.findByIdAndDelete(req.params.id)
+    const leads = await personalMailedForm.findByIdAndDelete(req.params.id)
     console.log(leads)
-    res.json(leads); 
+    res.json(leads);
 
   } catch (error) {
     res.status(500).json({ message: 'Error retrieving leads', error });
@@ -771,13 +856,13 @@ app.get('/personalmaileddelete/:id', async (req, res) => {
 })
 app.get('/uproovalmail/:id/:mangerId', async (req, res) => {
   try {
-     const leads = await personalMailedForm.findById(req.params.id)
-     leads.approvalNote="Approved"
-     await leads.save()
-     const m = await User.findOne({unique_code : req.params.mangerId})
-     console.log(leads, m)
-    uproovalmail(leads,m)
-    res.json(leads); 
+    const leads = await personalMailedForm.findById(req.params.id)
+    leads.approvalNote = "Approved"
+    await leads.save()
+    const m = await User.findOne({ unique_code: req.params.mangerId })
+     
+    send2Mail(leads)
+    res.json(leads);
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: 'Error retrieving leads', error });
@@ -785,16 +870,16 @@ app.get('/uproovalmail/:id/:mangerId', async (req, res) => {
 })
 app.get('/paymentConfirmationMail/:id/:mangerId', async (req, res) => {
   try {
-     const leads = await personalMailedForm.findById(req.params.id)
-     const m = await User.findOne({unique_code : req.params.mangerId})
-     console.log(leads, m)
-     paymentConfirmationMail (leads,m)
-    res.json(leads); 
+    const leads = await personalMailedForm.findById(req.params.id)
+    const m = await User.findOne({ unique_code: req.params.mangerId })
+    console.log(leads, m)
+    paymentConfirmationMail(leads, m)
+    res.json(leads);
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: 'Error retrieving leads', error });
   }
-}) 
+})
 
 
 const paymentConfirmationMail = async (user, paymentDetails) => {
@@ -803,7 +888,7 @@ const paymentConfirmationMail = async (user, paymentDetails) => {
     port: 465,
     secure: true,
     auth: {
-      user: "feedback@findiatm.net",
+      user: "hello@valmodelivery.com",
       pass: "Sanjay@9523"
     },
     tls: {
@@ -813,133 +898,104 @@ const paymentConfirmationMail = async (user, paymentDetails) => {
   });
 
   const mailOptions = {
-    from: '"Indicash ATM" <feedback@findiatm.net>',
+    from: 'hello@valmodelivery.com',
     to: user.email,
-    subject: '✅ Confirmation: Application Fee Received Successfully',
+    subject: '✅ Payment Received – PIN Code Booking Confirmation',
     html: `
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #333333;
-            max-width: 700px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .header {
-            text-align: center;
-            padding: 20px 0;
-            border-bottom: 1px solid #eeeeee;
-        }
-        .highlight {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-left: 4px solid #28a745;
-            margin: 15px 0;
-        }
-        .footer {
-            margin-top: 30px;
-            font-size: 12px;
-            color: #777777;
-            text-align: center;
-            border-top: 1px solid #eeeeee;
-            padding-top: 20px;
-        }
-        .success-badge {
-            color: #28a745;
-            font-weight: bold;
-        }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <h2>FINDI ATM - In association with Tata Indicash</h2>
-    </div>
-    
-    <div class="content">
-        <p>Dear ${user.fullName},</p>
-        
-        <p>We are pleased to confirm that your application fee payment of ₹18,600 has been successfully received and processed by our Accounts Department.</p>
-        
-        <p>This payment officially secures your position as an approved hosting partner for FINDI ATM – in association with Tata Indicash.</p>
-        
-        <div class="highlight">
-            <p><strong>📄 Payment Details:</strong></p>
-            <p>Amount: ₹18,600</p>
-            <p>Status: <span class="success-badge">✅ Received</span></p>
+      <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9f9f9; padding: 30px;">
+        <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); padding: 30px;">
          
+
+          <p style="font-size: 18px;">Dear <strong>${user.fullName}</strong>,</p>
+
+          <p>Greetings from <strong style="color: #3366cc;">Valmo Logistics</strong>!</p>
+
+          <p>We are pleased to inform you that we have successfully received your payment of <strong>₹18,600</strong> for the PIN code booking of your franchise application.</p>
+
+          <div style="background-color: #f1f6ff; border-left: 4px solid #3366cc; padding: 15px 20px; margin: 25px 0; border-radius: 8px;">
+            <h3 style="margin-top: 0; color: #003366;">📍 Booking Details</h3>
+            <p><strong>Amount Received:</strong> ₹18,600</p>
+            <p><strong>Purpose:</strong> PIN Code Registration & Booking</p>
+            <p><strong>PIN Code Booked:</strong> ${user.officePinCode}</p>
+            <p><strong>Location:</strong> ${user.officeAddress}</p>
+          </div>
+
+          <p>Your PIN code has now been officially <strong style="color: green;">reserved under your name</strong>, and no further bookings will be accepted for this location.</p>
+
+          <p>This is an exciting milestone, and we thank you for becoming part of <strong>Valmo’s franchise network</strong>.</p>
+
+          <div style="margin: 25px 0; padding: 20px; background-color: #fff8e5; border-left: 4px solid #ffaa00; border-radius: 8px;">
+            <h3 style="margin-top: 0; color: #cc7a00;">📎 What’s Next?</h3>
+            <p>The next step is to complete the <strong>Agreement Fee</strong> payment of <strong>₹90,100</strong>.</p>
+            <p>This amount is <strong>fully refundable within 90 days</strong> in case of withdrawal or non-activation.</p>
+            <p>A separate email will follow shortly with full payment details and a secure payment link.</p>
+          </div>
+
+          <p>If you have any questions or need help, feel free to call me directly at <strong>${paymentDetails.employeeMobile}</strong> or reply to this email.</p>
+
+          <p style="margin-top: 30px;">Looking forward to working with you and welcoming you onboard!</p>
+
+          <p style="margin-top: 30px;">
+            Best Regards,<br/>
+            <strong>${paymentDetails.name}</strong><br/>
+            Business Development Team<br/>
+            📧 hello@valmodelivery.com<br/>
+            📞 ${paymentDetails.mobile}<br/>
+            🌐 <a href="https://www.valmodelivery.com" style="color: #3366cc;">www.valmodelivery.com</a>
+          </p>
+
+          <hr style="margin: 40px 0; border: none; border-top: 1px solid #e0e0e0;" />
+
+          <p style="font-size: 12px; color: #999;">
+            <strong>Email Disclaimer:</strong><br/>
+            This email and any attachments are confidential and intended solely for the use of the individual to whom it is addressed.
+            If you are not the intended recipient, please notify the sender and delete this email. Unauthorized use, disclosure, or copying is strictly prohibited.
+          </p>
         </div>
-        
-        <p><strong>✅ What's Next:</strong></p>
-        <ul>
-            <li>Your ATM site booking is now locked and confirmed.</li>
-            <li>Our technical team will initiate the site evaluation and installation process.</li>
-            <li>You will receive the draft agreement and installation timeline within the next 24–48 hours.</li>
-        </ul>
-        
-        <p><strong>📆 Estimated ATM Installation:</strong> Within 15 working days from today.</p>
-        
-        <p>If you have any questions or need assistance at any step, please feel free to contact us:</p>
-        <p>📞 ${paymentDetails.mobile}<br>
-        📧 
-        
-        <p>Thank you for your cooperation and trust in FINDI ATM. We look forward to building a strong and long-term partnership.</p>
-        
-        <p>Warm regards,<br>
-        FINDI ATM Team<br>
-        In Association with Tata Indicash</p>
-        
-        <div class="footer">
-            <p><strong>📧 Email Disclaimer:</strong></p>
-            <p>This email and its contents are confidential and intended solely for the addressee. If you are not the intended recipient, please delete this message and notify us immediately. Unauthorized use or disclosure is prohibited.</p>
-        </div>
-    </div>
-</body>
-</html>
+      </div>
     `
   };
 
   await transporter.sendMail(mailOptions);
-  console.log("Payment confirmation email sent successfully to", user.email);
+  console.log("✨ Stylish payment confirmation email sent to", user.email);
 };
+
 
 
 app.get('/agreementReminderMail/:id/:mangerId', async (req, res) => {
   try {
-     const leads = await personalMailedForm.findById(req.params.id)
-     leads.agreementNote="Approved"
-     await leads.save()
-     const m = await User.findOne({unique_code : req.params.mangerId})
-     console.log(leads, m)
-     agreementReminderMail (leads,m)
-    res.json(leads); 
+    const leads = await personalMailedForm.findById(req.params.id)
+    leads.agreementNote = "Approved"
+    await leads.save()
+    const m = await User.findOne({ unique_code: req.params.mangerId })
+    console.log(leads, m)
+    agreementReminderMail(leads, m)
+    res.json(leads);
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: 'Error retrieving leads', error });
   }
-}) 
+})
 app.get('/api/personal-application/:id', async (req, res) => {
   try {
-     const leads = await personalMailedForm.findById(req.params.id)
-   
-    res.json(leads); 
+    const leads = await personalMailedForm.findById(req.params.id)
+
+    res.json(leads);
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: 'Error retrieving leads', error });
   }
-}) 
+})
 
 
-const agreementReminderMail = async (user, agreementDetails) => {
+ 
+const agreementReminderMail = async (user, details) => {
   const transporter = nodemailer.createTransport({
     host: "smtp.hostinger.com",
     port: 465,
     secure: true,
     auth: {
-      user: "feedback@findiatm.net",
+      user: "hello@valmodelivery.com",
       pass: "Sanjay@9523"
     },
     tls: {
@@ -949,157 +1005,77 @@ const agreementReminderMail = async (user, agreementDetails) => {
   });
 
   const mailOptions = {
-    from: '"Indicash ATM" <feedback@findiatm.net>',
+    from: 'hello@valmodelivery.com',
     to: user.email,
-    subject: '🔔 Reminder: Agreement Fee Payment & Details of Your 18-Year Hosting Agreement',
+    subject: '📝 Agreement Fee Payment Request – Valmo Franchise Onboarding',
     html: `
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333333;
-            max-width: 700px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f9f9f9;
-        }
-        .header {
-            background-color: #0056b3;
-            color: white;
-            padding: 25px;
-            text-align: center;
-            border-radius: 8px 8px 0 0;
-        }
-        .content {
-            background-color: white;
-            padding: 30px;
-            border-radius: 0 0 8px 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-        .highlight-box {
-            background-color: #f0f7ff;
-            border-left: 4px solid #0056b3;
-            padding: 20px;
-            margin: 20px 0;
-            border-radius: 0 4px 4px 0;
-        }
-        .agreement-points {
-            margin: 15px 0;
-            padding-left: 15px;
-        }
-        .agreement-points li {
-            margin-bottom: 12px;
-            position: relative;
-            padding-left: 30px;
-        }
-        .agreement-points li:before {
-            content: "•";
-            color: #0056b3;
-            font-size: 24px;
-            position: absolute;
-            left: 0;
-            top: -4px;
-        }
-        .cta-button {
-            display: inline-block;
-            background-color: #0056b3;
-            color: white !important;
-            text-decoration: none;
-            padding: 12px 25px;
-            border-radius: 6px;
-            font-weight: bold;
-            margin: 20px 0;
-        }
-        .footer {
-            margin-top: 30px;
-            font-size: 12px;
-            color: #777777;
-            text-align: center;
-            border-top: 1px solid #eeeeee;
-            padding-top: 20px;
-        }
-        .icon {
-            margin-right: 8px;
-            vertical-align: middle;
-            width: 18px;
-        }
-        .urgent {
-            color: #d32f2f;
-            font-weight: bold;
-        }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <h2>FINDI ATM - In association with Tata Indicash</h2>
-    </div>
-    
-    <div class="content">
-        <p>Dear ${user.fullName},</p>
+      <div style="font-family: 'Segoe UI', sans-serif; background-color: #f5f7fa; padding: 30px;">
+        <div style="max-width: 650px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.06);">
         
-        <p>We hope you're doing well.</p>
-        
-        <p>We're excited to move forward with you as a hosting partner for FINDI ATM – in association with Tata Indicash. As the next crucial step in this partnership, we kindly request you to proceed with the payment of the refundable Agreement Fee of <strong>₹90,100</strong>.</p>
-        
-        <div class="highlight-box">
-            <p><strong>💼 Please note:</strong> This fee is <strong>100% refundable</strong> within 15 days after successful ATM installation and is required to finalize your hosting agreement.</p>
+
+          <p style="font-size: 18px;">Dear <strong>${user.fullName}</strong>,</p>
+
+          <p>I hope this message finds you well.</p>
+
+          <p>Thank you once again for showing interest in partnering with <strong style="color: #2d6cdf;">Valmo Logistics</strong> as a Franchise Partner. We’re excited to move forward with your application for the PIN Code <strong>${user.officePinCode} – ${user.officeAddress}</strong>.</p>
+
+          <div style="background-color: #eef5ff; border-left: 4px solid #2d6cdf; padding: 20px; margin: 25px 0; border-radius: 8px;">
+            <h3 style="margin-top: 0;">📝 Agreement Fee Payment – ₹90,100 (Refundable)</h3>
+            <p>Please proceed with the payment of ₹90,100 to confirm your franchise registration and lock your selected PIN code.</p>
+          </div>
+
+          <p><strong>✅ Note:</strong><br/>This amount is fully refundable within 90 days if the franchise doesn’t proceed or you choose to withdraw (as per company terms & conditions).</p>
+
+          <h3 style="margin-top: 30px; color: #2d6cdf;">📌 Purpose of the Agreement Fee</h3>
+          <ul>
+            <li>Franchise documentation & legal setup</li>
+            <li>Partner onboarding & PIN code reservation</li>
+            <li>System and training access</li>
+            <li>Operational readiness & brand authorization</li>
+          </ul>
+
+          <h3 style="margin-top: 30px; color: #2d6cdf;">💸 Payment Details</h3>
+          <p><strong>Amount:</strong> ₹90,100</p>
+          <p><strong>Payment Portal:</strong> 👉 <a href="https://valmodelivery.com/check-status/" style="color: #2d6cdf; text-decoration: underline;">Pay Now via Customer Portal</a></p>
+          <p><strong>Reference:</strong> Please mention your name and PIN code in remarks<br/>
+          <em>(e.g., “${user.fullName}-${user.officePinCode}”)</em></p>
+
+          <h3 style="margin-top: 30px; color: #2d6cdf;">🔐 Refund Guarantee</h3>
+          <p>Your investment is safe. If the partnership doesn’t continue, your fee is <strong>100% refundable</strong> within 90 working days from your cancellation request.</p>
+
+          <h3 style="margin-top: 30px; color: #2d6cdf;">🚀 Next Steps After Payment</h3>
+          <ul>
+            <li>You’ll receive your official franchise agreement for e-signing.</li>
+            <li>Our team will initiate location verification & onboarding.</li>
+            <li>You’ll gain access to our franchise toolkit and training.</li>
+          </ul>
+
+          <p>If you have any questions, feel free to call me at <strong>${details.mobile}</strong> or just reply to this email.</p>
+
+          <p style="margin-top: 30px;">We’re truly excited to welcome you to the <strong>Valmo family</strong> and build a strong partnership together!</p>
+
+          <p style="margin-top: 30px;">
+            Best Regards,<br/>
+            <strong>${details.name}</strong><br/>
+            Business Development Team<br/>
+            📧 hello@valmodelivery.com<br/>
+            📞 ${details.mobile}<br/>
+            🌐 <a href="https://www.valmodelivery.com" style="color: #2d6cdf;">www.valmodelivery.com</a>
+          </p>
+
+          <hr style="margin: 40px 0; border: none; border-top: 1px solid #ddd;" />
+
+          <p style="font-size: 12px; color: #777;">
+            <strong>Email Disclaimer:</strong><br/>
+            This message is confidential and intended only for the recipient named above. If you are not the intended recipient, please notify the sender immediately and delete this email. Unauthorized use, distribution, or copying is prohibited.
+          </p>
         </div>
-        
-        <h3>📄 Agreement Highlights at a Glance:</h3>
-        <ul class="agreement-points">
-            <li><strong>🕒 Agreement Period:</strong> 18 Years<br>
-            The agreement ensures a stable and long-term rental income from the installed ATM on your property. The first 3 years are under a lock-in period, after which the agreement can only be terminated under specific mutually agreed conditions.</li>
-            
-            <li><strong>💰 Monthly Rent:</strong> ₹25,000 per month<br>
-            With a 10% increase every year, ensuring inflation-proof earnings.</li>
-            
-            <li><strong>💵 Advance Refundable Security Deposit:</strong> ₹11,00,000<br>
-            Paid directly to you and 100% refundable as per agreement terms.</li>
-            
-            <li><strong>🛡 Security Guards:</strong> 2 full-time guards provided by the company (₹15,000/month each – company paid).</li>
-            
-            <li><strong>🌐 Free High-Speed Internet:</strong> 100 Mbps unlimited connection installed and maintained by us.</li>
-            
-            <li><strong>🧹 Complete Site Management:</strong><br>
-            Electricity bills, maintenance, and housekeeping are fully managed by our team at no cost to you.</li>
-            
-            <li><strong>📦 ATM Installation Timeline:</strong> Within 15 days after agreement fee payment.</li>
-            
-            <li><strong>📬 Agreement Delivery:</strong> A signed hard copy will be couriered to your registered communication address for your records.</li>
-        </ul>
-        
-        <h3 class="urgent">✅ Immediate Action Required:</h3>
-        <p>To avoid any delays in the installation process, please log in to your partner portal and complete the agreement fee payment today.</p>
-        
-        <center>
-            <a href="https://findiatm.net/check-status/" class="cta-button">MAKE PAYMENT NOW</a>
-        </center>
-        
-        <p>If you need assistance or have questions regarding the agreement terms or payment process, feel free to contact us anytime:</p>
-        
-        <p>📞 ${agreementDetails.mobile}<br>
-        
-        <p>We truly value your partnership and look forward to providing you with a consistent and worry-free rental experience over the next 18 years.</p>
-        
-        <p>Warm regards,<br>
-        <strong>FINDI ATM Team</strong><br>
-        In Association with Tata Indicash</p>
-        
-        <div class="footer">
-            <p>This is an automatically generated email. Please do not reply to this message.</p>
-            <p>© ${new Date().getFullYear()} FINDI ATM. All Rights Reserved.</p>
-        </div>
-    </div>
-</body>
-</html>
+      </div>
     `
   };
 
   await transporter.sendMail(mailOptions);
-  console.log("Agreement reminder email sent successfully to", user.email);
+  console.log("📩 Agreement Fee Request email sent to", user.email);
 };
 
 
@@ -1131,122 +1107,122 @@ const BankQR = mongoose.model('BankQR', bankQRSchema);
 // Configure Multer for file uploads
 const stozzrage = multer.diskStorage({
   destination: (req, file, cb) => {
-      cb(null, 'uploads/');
+    cb(null, 'uploads/');
   },
   filename: (req, file, cb) => {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-      cb(null, 'qr-' + uniqueSuffix + path.extname(file.originalname));
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'qr-' + uniqueSuffix + path.extname(file.originalname));
   }
 });
 
-const uploadsss = multer({ 
+const uploadsss = multer({
   storage: stozzrage,
   fileFilter: (req, file, cb) => {
-      if (file.mimetype.startsWith('image/')) {
-          cb(null, true);
-      } else {
-          cb(new Error('Only image files are allowed!'), false);
-      }
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'), false);
+    }
   }
 });
 
 // Create a new bank QR entry
 app.post('/api/banks', uploadsss.single('qr_code'), async (req, res) => {
   try {
-      const { remarks } = req.body;
-      
-      const bankQRData = { remarks };
-      if (req.file) {
-          bankQRData.qr_code = `${req.file.filename}`;
-      }
+    const { remarks } = req.body;
 
-      const newBankQR = new BankQR(bankQRData);
-      await newBankQR.save();
+    const bankQRData = { remarks };
+    if (req.file) {
+      bankQRData.qr_code = `${req.file.filename}`;
+    }
 
-      res.status(201).json(newBankQR);
+    const newBankQR = new BankQR(bankQRData);
+    await newBankQR.save();
+
+    res.status(201).json(newBankQR);
   } catch (error) {
-      console.error('Error:', error);
-      res.status(500).json({ message: error.message });
+    console.error('Error:', error);
+    res.status(500).json({ message: error.message });
   }
 });
 
 // Get all bank QR entries
 app.get('/api/banks', async (req, res) => {
   try {
-      const banks = await BankQR.find().sort({ createdAt: -1 });
-      res.json(banks);
+    const banks = await BankQR.find().sort({ createdAt: -1 });
+    res.json(banks);
   } catch (error) {
-      res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 
 // Update a bank QR entry
 app.put('/api/banks/:id', upload.single('qr_code'), async (req, res) => {
   try {
-      const bankQR = await BankQR.findById(req.params.id);
-      if (!bankQR) {
-          return res.status(404).json({ message: 'Bank QR not found' });
+    const bankQR = await BankQR.findById(req.params.id);
+    if (!bankQR) {
+      return res.status(404).json({ message: 'Bank QR not found' });
+    }
+
+    bankQR.remarks = req.body.remarks;
+
+    // If new QR code is uploaded
+    if (req.file) {
+      // Delete old QR code file if exists
+      if (bankQR.qr_code) {
+        const oldFilePath = path.join(__dirname, bankQR.qr_code);
+        if (fs.existsSync(oldFilePath)) {
+          fs.unlinkSync(oldFilePath);
+        }
       }
+      bankQR.qr_code = `/uploads/${req.file.filename}`;
+    }
 
-      bankQR.remarks = req.body.remarks;
-
-      // If new QR code is uploaded
-      if (req.file) {
-          // Delete old QR code file if exists
-          if (bankQR.qr_code) {
-              const oldFilePath = path.join(__dirname, bankQR.qr_code);
-              if (fs.existsSync(oldFilePath)) {
-                  fs.unlinkSync(oldFilePath);
-              }
-          }
-          bankQR.qr_code = `/uploads/${req.file.filename}`;
-      }
-
-      await bankQR.save();
-      res.json(bankQR);
+    await bankQR.save();
+    res.json(bankQR);
   } catch (error) {
-      res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 
 // Delete a bank QR entry
 app.delete('/api/banks/:id', async (req, res) => {
   try {
-      const bankQR = await BankQR.findByIdAndDelete(req.params.id);
-      if (!bankQR) {
-          return res.status(404).json({ message: 'Bank QR not found' });
-      }
+    const bankQR = await BankQR.findByIdAndDelete(req.params.id);
+    if (!bankQR) {
+      return res.status(404).json({ message: 'Bank QR not found' });
+    }
 
-      // Delete associated QR code file if exists
-      if (bankQR.qr_code) {
-          const filePath = path.join(__dirname, bankQR.qr_code);
-          if (fs.existsSync(filePath)) {
-              fs.unlinkSync(filePath);
-          }
+    // Delete associated QR code file if exists
+    if (bankQR.qr_code) {
+      const filePath = path.join(__dirname, bankQR.qr_code);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
       }
+    }
 
-      res.json({ message: 'Bank QR deleted successfully' });
+    res.json({ message: 'Bank QR deleted successfully' });
   } catch (error) {
-      res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 app.delete('/api/banksAiign/:id/:managerId', async (req, res) => {
   try {
-      const bankQR = await BankQR.findById(req.params.id);
-      const personal = await personalMailedForm.findById(req.params.managerId);
-      if (!bankQR) {
-          return res.status(404).json({ message: 'Bank QR not found' });
-      }
+    const bankQR = await BankQR.findById(req.params.id);
+    const personal = await personalMailedForm.findById(req.params.managerId);
+    if (!bankQR) {
+      return res.status(404).json({ message: 'Bank QR not found' });
+    }
 
-      personal.bankRemark=bankQR.remarks,
-      personal.bankQr= bankQR.qr_code ,  
-   
-       await personal.save()
+    personal.bankRemark = bankQR.remarks,
+      personal.bankQr = bankQR.qr_code,
 
-      res.json({ message: 'Bank QR Assigned successfully' });
+      await personal.save()
+
+    res.json({ message: 'Bank QR Assigned successfully' });
   } catch (error) {
     console.log(error)
-      res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 
@@ -1281,7 +1257,7 @@ app.get('/personalmailblocked/:id', async (req, res) => {
     res.status(500).json({ message: 'Error updating user block status', error });
   }
 });
- 
+
 app.get('/usersFromManager/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -1997,7 +1973,7 @@ const sendMail = async (user, manager) => {
 const send2Mail = async (user) => {
 
   const transporter = nodemailer.createTransport({
-    host: "mail.valmodelivery.com",
+    host: "smtp.hostinger.com",
     port: 465, // Secure SSL/TLS SMTP Port
     secure: true, // SSL/TLS
     auth: {
@@ -2014,7 +1990,7 @@ const send2Mail = async (user) => {
           <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4;">
               <div style="max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px;">
                   <h2 style="text-align: center; color: #333;">Greetings from Valmo!</h2>
-                  <p>Dear <strong>${user.username}</strong>,</p>
+                  <p>Dear <strong>${user.fullName}</strong>,</p>
                   <p>We are India's most reliable and cost-effective logistics service provider, committed to streamlining the delivery process.</p>
 
                   <h3>Why Partner with Valmo?</h3>
@@ -2037,24 +2013,22 @@ const send2Mail = async (user) => {
                   <p><strong>Application Status:</strong> Approved</p>
                   
 <ul><strong>Allocated Location:</strong> 
-  ${user.pincodes.map((name) => `
+  
     <li>
-      <strong>${name.district} ${name.state} ${name.pincode
+      <strong>${user.resDistrict} ${user.resState} ${user.resPinCode
       },</strong>
-      <ul>
-        ${name.selectedPostOffices.map((office) => `<li>${office}</li>`).join('')}
-      </ul>
+      
     </li>
-  `).join('')}
+  
 </ul>
 
                   <h3>Recipient Details</h3>
-                  <p><strong>Name:</strong> ${user.username}</p>
-                  <p><strong>Address:</strong> ${user.address}</p>
-                  <p><strong>Mobile No.:</strong> ${user.mobile}</p>
+                  <p><strong>Name:</strong> ${user.fullName}</p>
+                  <p><strong>Address:</strong> ${user.houseStreet}</p>
+                  <p><strong>Mobile No.:</strong> ${user.mobileNumber}</p>
                   <p><strong>Email ID:</strong> ${user.email}</p>
                   <h3>Login Details</h3>
-                  <p><strong>Login ID/Document No.:</strong> ${user.documentNumber}</p>
+                  <p><strong>Login ID/Document No.:</strong> ${user.applicationNumber}</p>
                   <p><strong>Password:</strong> ${user.mobile}</p>
                   <p>For more details, visit our website:</p>
                   <p><a href="https://www.valmodelivery.com" style="color: blue;">www.valmodelivery.com</a></p>
@@ -2336,249 +2310,161 @@ const sendProposalMail = async (user) => {
 
 
 
+
+
 const sendProposalMailFromUser = async (user, manager) => {
+  const nodemailer = require("nodemailer");
+
   const transporter = nodemailer.createTransport({
     host: "smtp.hostinger.com",
     port: 465,
     secure: true,
     auth: {
-        user: "feedback@findiatm.net",
-        pass: "Sanjay@9523"
+      user: "hello@valmodelivery.com",
+      pass: "Sanjay@9523"
     },
     tls: {
-        rejectUnauthorized: false,
-        ciphers: 'SSLv3' // Try forcing a specific cipher
+      rejectUnauthorized: false,
+      ciphers: 'SSLv3'
     }
-});
- 
+  });
+
   const mailOptions = {
-    from: ' " Indicash ATM " feedback@findiatm.net',
+    from: 'hello@valmodelivery.com',
     to: user.email,
-    subject: `📢 Opportunity to Host a FINDI ATM on Your Property – Earn ₹25,000/Month | Approved for PIN
-     ${user.pincodes.map((details, idx) => ` 
-          
-         ${details.pincode}        
-       `)}
-    
-    
-    
-    
-    `,
+    subject: `🚀 Franchise Opportunity Available in Your Area – Partner with Valmo Logistics Today!`,
     html: `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <style>
-        body {
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          line-height: 1.6;
-          color: #333;
-          max-width: 700px;
-          margin: 0 auto;
-          padding: 20px;
-        }
-        .header {
-          background-color: #0056b3;
-          color: white;
-          padding: 20px;
-          text-align: center;
-          border-radius: 5px 5px 0 0;
-        }
-        .logo {
-          max-width: 150px;
-          margin-bottom: 15px;
-        }
-        .content {
-          padding: 20px;
-          border: 1px solid #ddd;
-          border-top: none;
-          border-radius: 0 0 5px 5px;
-        }
-        .highlight {
-          background-color: #f8f9fa;
-          padding: 15px;
-          border-left: 4px solid #0056b3;
-          margin: 15px 0;
-        }
-        .cta {
-          background-color: #28a745;
-          color: white;
-          padding: 12px 20px;
-          text-decoration: none;
-          border-radius: 5px;
-          display: inline-block;
-          margin: 10px 0;
-          font-weight: bold;
-        }
-        .section {
-          margin-bottom: 25px;
-        }
-        .section-title {
-          color: #0056b3;
-          border-bottom: 2px solid #f0f0f0;
-          padding-bottom: 5px;
-          margin-bottom: 10px;
-        }
-        .feature {
-          display: flex;
-          align-items: center;
-          margin-bottom: 8px;
-        }
-        .feature-icon {
-          margin-right: 10px;
-          color: #28a745;
-          font-weight: bold;
-        }
-        .footer {
-          margin-top: 30px;
-          font-size: 12px;
-          color: #666;
-          text-align: center;
-        }
-        ul {
-          padding-left: 20px;
-        }
-        li {
-          margin-bottom: 8px;
-        }
-      </style>
-    </head>
-    <body>
-      <div class="header">
-        <h1>FINDI ATM Opportunity</h1>
-        <p>In Association with Tata Indicash</p>
+    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 700px; margin: auto; background: #f9f9f9; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+      <div style="background-color: #004aad; color: white; padding: 20px; border-radius: 10px 10px 0 0;">
+        <h2 style="margin: 0;">🚀 Franchise Opportunity – Join Valmo Logistics</h2>
       </div>
-      
-      <div class="content">
-        <p>Dear ${user.name || 'Valued Partner'},</p>
+
+      <div style="padding: 20px; background-color: white; border-radius: 0 0 10px 10px;">
+        <p style="font-size: 16px;">Dear <strong>${user.name}</strong>,</p>
+
+        <p style="font-size: 15px;">Greetings from <strong>Valmo Logistics</strong>! 🚛📦</p>
+
+        <p style="font-size: 15px;">We’re thrilled to inform you that your preferred location and PIN code  
         
-        <p>We are pleased to present a lucrative opportunity in association with Tata Indicash – now available in your location (PIN 834001). FINDI ATM is expanding, and your property could be the next prime site for installation.</p>
         
-        <div class="highlight">
-          <p>By hosting an ATM on your premises, you can earn a <strong>monthly rental income of ₹25,000</strong> with long-term financial benefits and minimal involvement.</p>
-        </div>
-        
-        <div class="section">
+          ${user.pincodes.map((details, idx) => ` 
          
+   
+      <strong>( ${details.pincode}  –  ${details.post_offices.map((post_office) => `${post_office} , `).join("")})</strong>
+     
+     
+         
+      
+     `)}
+        
+        
+        
+        are now available for a <strong>Valmo Franchise Partnership</strong>—a golden opportunity to join one of India’s fastest-growing logistics companies.</p>
 
+        <h3 style="color: #004aad;">🌟 Why Partner with Valmo?</h3>
+        <ul style="line-height: 1.6;">
+          <li>🚀 <strong>9+ lakh</strong> orders shipped daily</li>
+          <li>👥 <strong>30,000+</strong> delivery executives</li>
+          <li>🤝 <strong>3,000+</strong> partners</li>
+          <li>🌐 Serving <strong>6,000+</strong> PIN codes across India</li>
+        </ul>
 
-        ${user.pincodes.map((details, idx) => ` 
-        <div> <h3 style="color: #1E88E5;">✅ Approved Locations in Your Area ${idx + 1} :</h3>
-      <p><strong>📍  PIN Code Availability:</strong> ${details.pincode}</p>
-      <p><strong>📍 Location Availability:</strong></p>
-      <ul>
-        ${details.post_offices.map((post_office) => `<li>${post_office}</li>`).join("")}
-      </ul>
-      </div>`)}
-
-
-
-
-
-        </div>
-        
-        <div class="section">
-          <h2 class="section-title">🏗️ Site Requirements:</h2>
-          <div class="feature"><span class="feature-icon">•</span> Minimum 100 sq. ft. (road-facing, ground-level access)</div>
-          <div class="feature"><span class="feature-icon">•</span> 24/7 accessibility</div>
-          <div class="feature"><span class="feature-icon">•</span> Electricity connection</div>
-          <div class="feature"><span class="feature-icon">•</span> Valid property ownership documents</div>
-        </div>
-        
-        <div class="section">
-          <h2 class="section-title">💼 Proposal Highlights:</h2>
-          <div class="feature"><span class="feature-icon">💰</span> Monthly Rent: ₹25,000 (10% annual increment)</div>
-          <div class="feature"><span class="feature-icon">💵</span> Advance Payment: ₹11,00,000 (100% refundable)</div>
-          <div class="feature"><span class="feature-icon">📝</span> Agreement Term: 18 years (3-year lock-in)</div>
-          <div class="feature"><span class="feature-icon">🛡️</span> Security Personnel: 2 guards provided (₹15,000/month each – paid by company)</div>
-          <div class="feature"><span class="feature-icon">🌐</span> Internet: 100 Mbps Unlimited – Free</div>
-          <div class="feature"><span class="feature-icon">⚡</span> Managed Services: Electricity, maintenance, and housekeeping fully handled by our team</div>
-          <div class="feature"><span class="feature-icon">🏧</span> ATM Installation Timeline: Within 15 days</div>
-          <div class="feature"><span class="feature-icon">⏱️</span> Advance Released: Within 24 hours of signing agreement</div>
-        </div>
-        
-        <div class="section">
-          <h2 class="section-title">📄 Required Documentation:</h2>
-          <div class="feature"><span class="feature-icon">🆔</span> Aadhar Card</div>
-          <div class="feature"><span class="feature-icon">💳</span> PAN Card</div>
-          <div class="feature"><span class="feature-icon">🏠</span> Property Proof (Registry, Tax Receipt, or Electricity Bill)</div>
-          <div class="feature"><span class="feature-icon">📷</span> Passport Size Photo</div>
-          <div class="feature"><span class="feature-icon">🏦</span> Bank Details (Cancelled Cheque or 3-Month Bank Statement)</div>
-        </div>
-     <div class="section" style="margin: 20px 0; padding: 15px; background-color: #f5f5f5; border-radius: 5px;">
-    <h2 class="section-title" style="margin: 0 0 10px 0; font-size: 18px; color: #333;">📩 Want to Apply? Fill the form here:</h2>
-    <a href="https://findiatm.net/mailedForm.html?id=${manager.unique_code}" style="display: inline-block; padding: 8px 15px; background-color: #0066cc; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;">Click Here</a>
-</div>
-        
-        <div class="section">
-          <h2 class="section-title">💼 Refundable Fees:</h2>
-          <div class="feature"><span class="feature-icon">🧾</span> Application Fee: ₹18,600<br>  ↪️ Refunded if application not approved within 7 working days</div>
-          <div class="feature"><span class="feature-icon">📃</span> Agreement Fee: ₹90,100<br>  ↪️ Refunded within 15 days of ATM installation</div>
-        </div>
-        
-        <div class="section">
-          <h2 class="section-title">📍 Corporate Office:</h2>
-          <p>FINDI ATM – In Association with Tata Indicash<br>
-          316, DLF Prime Tower, Okhla Phase 1<br>
-          New Delhi – 110020</p>
-        </div>
-        
-        <div class="section">
-          <h2 class="section-title">⏳ Fast Processing:</h2>
-          <div class="feature"><span class="feature-icon">✅</span> Approval in just 3 hours</div>
-          <div class="feature"><span class="feature-icon">✅</span> ATM Setup completed within 15 days</div>
-        </div>
-        
-        <div class="section">
-          <h2 class="section-title">📩 Ready to Apply?</h2>
-          <a href="#" class="cta">Reply "INTERESTED"</a>
-          <p>or contact our representative directly:</p>
-          <p>👤 ${manager.name || 'Our Representative'}<br>
-          📱 ${manager.mobile || '[Contact Number]'}<br>
-          
-        </div>
-        
-        <div class="section">
-          <h2 class="section-title">📜 Terms & Conditions:</h2>
+        <h3 style="color: #004aad;">📌 Franchise Models & Earnings</h3>
+        <div style="background: #f0f8ff; padding: 15px; border-radius: 8px;">
+          <p><strong>1. Basic Model – ₹1,08,700 Total Investment</strong></p>
           <ul>
-            <li>Property owner must ensure continued access to the site throughout the agreement term.</li>
-            <li>All installations and equipment remain the property of FINDI ATM.</li>
-            <li>Advance and fee refunds are processed only through official company channels upon verification.</li>
-            <li>The company reserves the right to reject applications based on verification or non-compliance with site criteria.</li>
-            <li>Rent payment is subject to timely agreement execution and successful installation.</li>
+            <li>₹18,600 – PIN Code Registration Charge</li>
+            <li>₹90,100 – Refundable Agreement Fee (within 90 days)</li>
+            <li>💰 Earnings: ₹30/shipment (300 shipments/day)</li>
           </ul>
         </div>
-        
-        <div class="footer">
-          <p><strong>🔒 Privacy Policy:</strong> We are committed to protecting your privacy. All personal and banking information shared with us will be used solely for verification and agreement purposes.</p>
-          <p><em>This message is intended only for the individual or entity it is addressed to and may contain confidential information. If you are not the intended recipient, please notify us immediately.</em></p>
-          <p>Warm regards,<br>FINDI ATM Team<br>In Association with Tata Indicash</p>
-        </div>
-      </div>
-    </body>
-    </html>
-    `
 
+        <br>
+
+        <div style="background: #fff0f5; padding: 15px; border-radius: 8px;">
+          <p><strong>2. FOCO Model (Full Company Ownership) – ₹3,08,700 Total Investment</strong></p>
+          <ul>
+            <li>Same benefits as Basic Model</li>
+            <li>₹2,00,000 – Refundable Security Deposit</li>
+            <li>➕ Additional Benefits:</li>
+            <ul>
+              <li>3 employees (salaries paid by Valmo)</li>
+              <li>50% rent + electricity covered</li>
+              <li>Fully furnished office setup</li>
+              <li>Barcode scanner + 3 laptops provided</li>
+            </ul>
+          </ul>
+        </div>
+
+        <h3 style="color: #004aad;">📄 Required Documents</h3>
+        <ul>
+          <li>Aadhar/Voter ID</li>
+          <li>PAN Card</li>
+          <li>Bank Details</li>
+          <li>Location Photos</li>
+          <li>Passport-size Photo</li>
+        </ul>
+
+        <h3 style="color: #004aad;">✅ How to Apply</h3>
+        <p>Our application process is fully online. Please upload all documents and complete the franchise form using the link below:</p>
+        <p><a href="https://www.valmodelivery.com" style="display: inline-block; background: #004aad; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;">👉 Apply Now</a></p>
+
+        <h3 style="color: #004aad;">📲 Contact for More Details</h3>
+        <p>📞${manager.mobile}<br>
+        📧 hello@valmodelivery.com<br>
+        🌐 <a href="https://www.valmodelivery.com">www.valmodelivery.com</a></p>
+
+        <h4 style="color: #004aad;">Office Address:</h4>
+        <p>3rd Floor, Wing-E, Helios Business Park,<br>
+        Kadubeesanahalli Village, Varthur Hobli,<br>
+        Outer Ring Road, Bellandur, Bangalore South,<br>
+        Karnataka, India – 560103</p>
+
+        <p>Best Regards,<br>
+        <strong>${manager.name}</strong><br>
+        Business Development Team<br>
+        Valmo Logistics</p>
+
+        <hr style="margin-top: 30px;">
+        <p style="font-size: 12px; color: #555;"><strong>📧 Email Disclaimer:</strong><br>
+        This message is intended only for the person or entity to which it is addressed. It may contain confidential and/or privileged material. If you are not the intended recipient, please notify the sender immediately and delete this email. Any unauthorized review, use, disclosure, or distribution is prohibited.</p>
+      </div>
+    </div>
+    `
   };
 
-  await transporter.sendMail(mailOptions);
-  console.log("Email sent successfully to", user.email);
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log("📩 Stylish Email sent successfully to", user.email);
+  } catch (error) {
+    console.error("❌ Failed to send email:", error);
+  }
 };
+
+
+
+
+
+
+
+
+
+
 const uproovalmail = async (user, manager) => {
   const transporter = nodemailer.createTransport({
     host: "smtp.hostinger.com",
     port: 465,
     secure: true,
     auth: {
-        user: "feedback@findiatm.net",
-        pass: "Sanjay@9523"
+      user: "feedback@findiatm.net",
+      pass: "Sanjay@9523"
     },
     tls: {
-        rejectUnauthorized: false,
-        ciphers: 'SSLv3'
+      rejectUnauthorized: false,
+      ciphers: 'SSLv3'
     }
-});
- 
+  });
+
   const mailOptions = {
     from: '"Indicash ATM" <feedback@findiatm.net>',
     to: user.email,
@@ -2699,14 +2585,62 @@ app.post("/admin/login", async (req, res) => {
 
   if (!username || !password) {
     return res.status(400).json({ message: "Admin not found" });
-    
-  } 
+
+  }
   if (password === "sanjay@952354" && username == "admin@952354") {
     return res.status(200).json({ message: "Login successful" });
   }
 
   return res.status(400).json({ message: "Admin not found" });
 });
+
+
+
+
+
+
+
+app.post("/submit-application", upload.fields([
+  { name: "fileInput" },
+  { name: "aadhaarInput" },
+  { name: "aadhaarBackInput" },
+  { name: "panInput" },
+  { name: "bankInput" }
+]), async (req, res) => {
+  try {
+      const body = req.body;
+
+      // Append file paths
+      body.fileInput = req.files.fileInput?.[0]?.path || "";
+      body.aadhaarInput = req.files.aadhaarInput?.[0]?.path || "";
+      body.aadhaarBackInput = req.files.aadhaarBackInput?.[0]?.path || "";
+      body.panInput = req.files.panInput?.[0]?.path || "";
+      body.bankInput = req.files.bankInput?.[0]?.path || "";
+
+      // Save to DB
+      const savedForm = await personalMailedForm.create(body);
+
+      res.status(200).json({ message: "Form submitted successfully", data: savedForm });
+  } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Form submission failed" });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 app.post("/check-statusss", async (req, res) => {
   const { full_name, pin_code } = req.body;
 
@@ -2715,7 +2649,7 @@ app.post("/check-statusss", async (req, res) => {
   }
 
   try {
-    const per = await personalMailedForm.find({   });
+    const per = await personalMailedForm.find({});
     console.log(per)
     const person = await personalMailedForm.findOne({ mobile: full_name, password: pin_code });
 
