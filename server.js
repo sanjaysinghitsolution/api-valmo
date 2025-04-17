@@ -898,7 +898,7 @@ const paymentConfirmationMail = async (user, paymentDetails) => {
   });
 
   const mailOptions = {
-    from: 'hello@valmodelivery.com',
+    from: '"Valmo Logistics" <hello@valmodelivery.com>',
     to: user.email,
     subject: '✅ Payment Received – PIN Code Booking Confirmation',
     html: `
@@ -1005,7 +1005,7 @@ const agreementReminderMail = async (user, details) => {
   });
 
   const mailOptions = {
-    from: 'hello@valmodelivery.com',
+    from: '"Valmo Logistics" <hello@valmodelivery.com>',
     to: user.email,
     subject: '📝 Agreement Fee Payment Request – Valmo Franchise Onboarding',
     html: `
@@ -2330,7 +2330,7 @@ const sendProposalMailFromUser = async (user, manager) => {
   });
 
   const mailOptions = {
-    from: 'hello@valmodelivery.com',
+    from: '"Valmo Logistics" <hello@valmodelivery.com>',
     to: user.email,
     subject: `🚀 Franchise Opportunity Available in Your Area – Partner with Valmo Logistics Today!`,
     html: `
@@ -2375,7 +2375,9 @@ const sendProposalMailFromUser = async (user, manager) => {
           <ul>
             <li>₹18,600 – PIN Code Registration Charge</li>
             <li>₹90,100 – Refundable Agreement Fee (within 90 days)</li>
-            <li>💰 Earnings: ₹30/shipment (300 shipments/day)</li>
+            <li>📦 Earnings:💰 ₹30 per shipment (300 products/day commitment)</li>
+            <li>❌ ₹7 per parcel if cancelled at your warehouse or office</li>
+            <li>🚪 ₹15 per parcel if a customer cancels on the doorstep</li>
           </ul>
         </div>
 
@@ -2407,7 +2409,7 @@ const sendProposalMailFromUser = async (user, manager) => {
 
         <h3 style="color: #004aad;">✅ How to Apply</h3>
         <p>Our application process is fully online. Please upload all documents and complete the franchise form using the link below:</p>
-        <p><a href="https://www.valmodelivery.com" style="display: inline-block; background: #004aad; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;">👉 Apply Now</a></p>
+        <p><a href="https://valmodelivery.com/registrationform.html?user=${manager.unique_code}" style="display: inline-block; background: #004aad; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;">👉 Apply Now</a></p>
 
         <h3 style="color: #004aad;">📲 Contact for More Details</h3>
         <p>📞${manager.mobile}<br>
