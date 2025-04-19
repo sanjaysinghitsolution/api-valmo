@@ -1084,7 +1084,7 @@ const agreementReminderMail = async (user, details) => {
 
           <h3 style="margin-top: 30px; color: #2d6cdf;">💸 Payment Details</h3>
           <p><strong>Amount:</strong> ₹90,100</p>
-          <p><strong>Payment Portal:</strong> 👉 <a href="https://valmodelivery.com/check-status/?id=${user.applicationNumber}&pwd=${user.password}" style="color: #2d6cdf; text-decoration: underline;">Pay Now via Customer Portal</a></p>
+          <p><strong>Payment Portal:</strong> 👉 <a href="https://valmodelivery.com/check-status/?id=${user.documentNumber}&pwd=${user.password}" style="color: #2d6cdf; text-decoration: underline;">Pay Now via Customer Portal</a></p>
           <p><strong>Reference:</strong> Please mention your name and PIN code in remarks<br/>
           <em>(e.g., “${user.fullName}-${user.officePinCode}”)</em></p>
 
