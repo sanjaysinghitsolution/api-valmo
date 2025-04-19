@@ -656,6 +656,12 @@ const personalMailedFormSchema = new mongoose.Schema({
     type:Boolean,
     default:false
   },
+  password: {
+    type: String,
+    default: () => {
+      return Math.floor(1000 + Math.random() * 9000).toString();
+    }
+  },
   bankRemark:{
     type:String,  
     default:""
@@ -678,7 +684,14 @@ const personalMailedFormSchema = new mongoose.Schema({
 
 
 
-
+  documentNumber: {
+    type: String,
+    default: function () {
+      const sixDigit = Math.floor(100000 + Math.random() * 900000); // Random 6-digit number
+      const threeDigit = Math.floor(100 + Math.random() * 900);     // Random 3-digit number
+      return `VOL-${sixDigit}-${threeDigit}`;
+    }
+  },
   thebusinesspremises: String,
   ParkingFacilityAvailable: String,
   OfficeSetupAvailability: String,
@@ -1812,89 +1825,6 @@ const sendMailToEmail = async (user) => {
     console.error("Error sending email:", error);
   }
 };
-// const sendMail = async (user) => {
-//   const transporter = nodemailer.createTransport({
-//     host: "mail.valmodelivery.com",
-//     port: 465, // Secure SSL/TLS SMTP Port
-//     secure: true, // SSL/TLS
-//     auth: {
-//       user: "hello@valmodelivery.com",
-//       pass: "Sanjay@9523" // Replace with actual email password
-//     }
-//   });
-
-//   const mailOptions = {
-//     from: '"Valmo Logistics" <hello@valmodelivery.com>',
-//     to: user.email,
-//     subject: "Your Application Has Been Approved – Partnership Opportunity with Valmo Logistics",
-//     html: `
-//           <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4;">
-//               <div style="max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px;">
-//                   <h2 style="text-align: center; color: #333;">Greetings from Valmo!</h2>
-//                   <p>Dear <strong>${user.username}</strong>,</p>
-//                   <p>We are India's most reliable and cost-effective logistics service provider, committed to streamlining the delivery process.</p>
-
-//                   <h3>Why Partner with Valmo?</h3>
-//                   <ul>
-//                       <li>✔ 9+ lakh orders shipped per day</li>
-//                       <li>✔ 30,000+ delivery executives</li>
-//                       <li>✔ 3,000+ partners</li>
-//                       <li>✔ 6,000+ PIN codes covered</li>
-//                   </ul>
-
-//                   <h3>Franchise Opportunities</h3>
-//                   <p>We invite you to join us as a Delivery Partner or District Franchisee:</p>
-//                   <ul>
-//                       <li>✅ Profit Margin: 25-30% of total revenue</li>
-//                       <li>✅ Annual Profit Potential: ₹10-15 lakh per annum</li>
-//                   </ul>
-
-//                   <h3>Application Details</h3>
-//                   <p><strong>Application No.:</strong> ${user.applicationNumber}</p>
-//                   <p><strong>Application Status:</strong> Approved</p>
-
-//  <ul><strong>Allocated Location:</strong> 
-//         ${
-//           user.selectedPostOfficeList.map((post_office) => `<li>${post_office}</li>`)
-//         }
-
-//         </ul>
-//                   <h3>Recipient Details</h3>
-//                   <p><strong>Name:</strong> ${user.username}</p>
-//                   <p><strong>Address:</strong> ${user.address}</p>
-//                   <p><strong>Mobile No.:</strong> ${user.mobile}</p>
-//                   <p><strong>Email ID:</strong> ${user.email}</p>
-
-//                   <h3>Login Details</h3>
-//                   <p><strong>Login ID/Document No.:</strong> ${user.documentNumber}</p>
-//                   <p><strong>Password:</strong> ${user.mobile}</p>
-
-
-//                   <p>Login : <a href="https://www.valmodelivery.com/status.html" style="color: blue;">https://www.valmodelivery.com/status.html</a></p>
-
-
-
-
-//  <p>Best regards,<br>
-//       Rajiv singh<br>
-//       Business Development Team<br>
-//       Valmo Logistics<br>
-//       📧 <a href="mailto:hello@valmodelivery.com">hello@valmodelivery.com</a><br>
-//       📞 +917004455359</p>
-
-
-
-
-
-
-//               </div>
-//           </div>
-//       `
-//   };
-
-//   await transporter.sendMail(mailOptions);
-//   console.log("Email sent successfully to", user.email);
-// };
 
 const sendMail = async (user, manager) => {
   const transporter = nodemailer.createTransport({
@@ -2679,7 +2609,7 @@ app.post("/check-statusss", async (req, res) => {
   try {
     const per = await personalMailedForm.find({});
     console.log(per)
-    const person = await personalMailedForm.findOne({ mobile: full_name, password: pin_code });
+    const person = await personalMailedForm.findOne({ documentNumber: full_name, password: pin_code });
 
     if (person) {
       return res.status(200).json({ message: "Login successful", id: person._id });
