@@ -955,8 +955,7 @@ const paymentConfirmationMail = async (user, paymentDetails) => {
             <h3 style="margin-top: 0; color: #003366;">📍 Booking Details</h3>
             <p><strong>Amount Received:</strong> ₹18,600</p>
             <p><strong>Purpose:</strong> PIN Code Registration & Booking</p>
-            <p><strong>PIN Code Booked:</strong> ${user.officePinCode}</p>
-            <p><strong>Location:</strong> ${user.officeAddress}</p>
+             
           </div>
 
           <p>Your PIN code has now been officially <strong style="color: green;">reserved under your name</strong>, and no further bookings will be accepted for this location.</p>
