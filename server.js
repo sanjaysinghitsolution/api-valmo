@@ -624,10 +624,10 @@ const personalMailedFormSchema = new mongoose.Schema({
   sourceLoan: Boolean,
   sourcePartner: Boolean,
   sourceOther: Boolean,
-   password:{
+  password: {
     type: String,
-    default:Math.random().toString(36).substring(4)
-   },
+    default: Math.random().toString(36).substring(4)
+  },
   loansYes: Boolean,
   loansNo: Boolean,
   vehiclesYes: Boolean,
@@ -652,9 +652,9 @@ const personalMailedFormSchema = new mongoose.Schema({
   statusApproved: Boolean,
   statusRejected: Boolean,
   statusUnderReview: Boolean,
-  isBlocked:{
-    type:Boolean,
-    default:false
+  isBlocked: {
+    type: Boolean,
+    default: false
   },
   password: {
     type: String,
@@ -662,22 +662,22 @@ const personalMailedFormSchema = new mongoose.Schema({
       return Math.floor(1000 + Math.random() * 9000).toString();
     }
   },
-  bankRemark:{
-    type:String,  
-    default:""
+  bankRemark: {
+    type: String,
+    default: ""
   },
-  bankQr:{
-    type:String,  
-    default:""
+  bankQr: {
+    type: String,
+    default: ""
   },
 
-  approvalNote:{
-    type:String,  
-    default:""
+  approvalNote: {
+    type: String,
+    default: ""
   },
-  agreementNote:{
-    type:String,  
-    default:""
+  agreementNote: {
+    type: String,
+    default: ""
   },
 
 
@@ -771,40 +771,40 @@ app.post('/api/personal-application', upload.fields([
 
 
 
- 
+
 app.post("/submit-application", upload.fields([
-    { name: "fileInput" },
-    { name: "aadhaarInput" },
-    { name: "aadhaarBackInput" },
-    { name: "panInput" },
-    { name: "bankInput" }
+  { name: "fileInput" },
+  { name: "aadhaarInput" },
+  { name: "aadhaarBackInput" },
+  { name: "panInput" },
+  { name: "bankInput" }
 ]), async (req, res) => {
-    try {
-        const body = req.body;
-       console.log(req.query)
-        // Append file paths
-        body.fileInput = req.files.fileInput?.[0]?.filename || "";
-        body.aadhaarInput = req.files.aadhaarInput?.[0]?.filename || "";
-        body.aadhaarBackInput = req.files.aadhaarBackInput?.[0]?.filename || "";
-        body.panInput = req.files.panInput?.[0]?.filename || "";
-        body.bankInput = req.files.bankInput?.[0]?.filename || "";
+  try {
+    const body = req.body;
+    console.log(req.query)
+    // Append file paths
+    body.fileInput = req.files.fileInput?.[0]?.filename || "";
+    body.aadhaarInput = req.files.aadhaarInput?.[0]?.filename || "";
+    body.aadhaarBackInput = req.files.aadhaarBackInput?.[0]?.filename || "";
+    body.panInput = req.files.panInput?.[0]?.filename || "";
+    body.bankInput = req.files.bankInput?.[0]?.filename || "";
 
-        // Save to DB
-        const savedForm = await personalMailedForm.create(body);
-        // Update user with the new form reference
-        if (req.query.user) {
-            await User.findOneAndUpdate(
-                { unique_code: req.query.user },
-                { $push: { personalMailedForm: savedForm._id } }
-            );
-          
-        }
+    // Save to DB
+    const savedForm = await personalMailedForm.create(body);
+    // Update user with the new form reference
+    if (req.query.user) {
+      await User.findOneAndUpdate(
+        { unique_code: req.query.user },
+        { $push: { personalMailedForm: savedForm._id } }
+      );
 
-        res.status(200).json({ message: "Form submitted successfully", data: savedForm });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Form submission failed" });
     }
+
+    res.status(200).json({ message: "Form submitted successfully", data: savedForm });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Form submission failed" });
+  }
 });
 
 
@@ -899,7 +899,7 @@ app.get('/uproovalmail/:id/:mangerId', async (req, res) => {
     leads.approvalNote = "Approved"
     await leads.save()
     const m = await User.findOne({ unique_code: req.params.mangerId })
-     
+
     send2Mail(leads)
     res.json(leads);
   } catch (error) {
@@ -1027,7 +1027,7 @@ app.get('/api/personal-application/:id', async (req, res) => {
 })
 
 
- 
+
 const agreementReminderMail = async (user, details) => {
   const transporter = nodemailer.createTransport({
     host: "smtp.hostinger.com",
@@ -1943,55 +1943,66 @@ const send2Mail = async (user) => {
     to: user.email,
     subject: "Your Application Has Been Approved – Partnership Opportunity with Valmo Logistics",
     html: `
-          <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4;">
-              <div style="max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px;">
-                  <h2 style="text-align: center; color: #333;">Greetings from Valmo!</h2>
-                  <p>Dear <strong>${user.fullName}</strong>,</p>
-                  <p>We are India's most reliable and cost-effective logistics service provider, committed to streamlining the delivery process.</p>
-
-                  <h3>Why Partner with Valmo?</h3>
-                  <ul>
-                      <li>✔ 9+ lakh orders shipped per day</li>
-                      <li>✔ 30,000+ delivery executives</li>
-                      <li>✔ 3,000+ partners</li>
-                      <li>✔ 6,000+ PIN codes covered</li>
-                  </ul>
-
-                  <h3>Franchise Opportunities</h3>
-                  <p>We invite you to join us as a Delivery Partner or District Franchisee:</p>
-                  <ul>
-                      <li>✅ Profit Margin: 25-30% of total revenue</li>
-                      <li>✅ Annual Profit Potential: ₹10-15 lakh per annum</li>
-                  </ul>
-
-                  <h3>Application Details</h3>
-                  <p><strong>Application No.:</strong> ${user.applicationNumber}</p>
-                  <p><strong>Application Status:</strong> Approved</p>
-                  
-<ul><strong>Allocated Location:</strong> 
+    <div style="font-family: 'Poppins', Arial, sans-serif; background-color: #f6f9fc; padding: 30px;">
+      <div style="max-width: 600px; margin: auto; background: #ffffff; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.05); overflow: hidden;">
+        
+        <div style="background-color: #2d6a4f; color: white; padding: 20px; text-align: center;">
+          <h2 style="margin: 0; font-size: 24px;">Valmo Logistics</h2>
+          <p style="margin: 5px 0 0;">Your trusted partner in logistics</p>
+        </div>
+        
+        <div style="padding: 30px;">
+          <p style="font-size: 16px; color: #333;">Dear <strong>${user.fullName}</strong>,</p>
+          <p style="font-size: 15px; color: #555; line-height: 1.6;">
+            Congratulations! Your application has been <strong style="color: #2d6a4f;">Approved</strong> for partnership with Valmo Logistics.
+          </p>
   
-    <li>
-      <strong>${user.resDistrict} ${user.resState} ${user.resPinCode
-      },</strong>
-      
-    </li>
+          <h3 style="color: #2d6a4f; margin-top: 25px;">🚀 Why Join Valmo?</h3>
+          <ul style="padding-left: 20px; color: #444; font-size: 15px; line-height: 1.6;">
+            <li>✔ 9+ lakh orders shipped daily</li>
+            <li>✔ 30,000+ active delivery executives</li>
+            <li>✔ 3,000+ growing partners</li>
+            <li>✔ Service coverage across 6,000+ PIN codes</li>
+          </ul>
   
-</ul>
+          <h3 style="color: #2d6a4f; margin-top: 25px;">💼 Franchise Details</h3>
+          <ul style="padding-left: 20px; color: #444; font-size: 15px; line-height: 1.6;">
+            <li>✅ Profit Margin: <strong>25–30%</strong> of revenue</li>
+            <li>✅ Annual Income Potential: <strong>₹10–15 Lakh</strong></li>
+          </ul>
+  
+          <h3 style="color: #2d6a4f; margin-top: 25px;">📝 Application Summary</h3>
+          <p style="font-size: 15px; color: #555; line-height: 1.6;">
+            <strong>Application No.:</strong> ${user.applicationNumber}<br/>
+            <strong>Status:</strong> Approved<br/>
+            <strong>Allocated Location:</strong> ${user.resDistrict}, ${user.resState} - ${user.resPinCode}
+          </p>
+  
+           
+  
+          <h3 style="color: #2d6a4f; margin-top: 25px;">🔐 Login Credentials</h3>
+          <p style="font-size: 15px; color: #555; line-height: 1.6;">
+            <strong>Login ID:</strong> ${user.documentNumber}<br/>
+            <strong>Password:</strong> ${user.password}
+          </p>
+  
+       <div style="text-align: center; margin-top: 30px;">
+  <a href="https://valmodelivery.com/check-status/?id=${user.documentNumber}&pwd=${user.password}" 
+     target="_blank" 
+     style="background-color: #2d6a4f; color: white; padding: 12px 25px; text-decoration: none; font-weight: bold; border-radius: 8px; display: inline-block;">
+    View Status Online
+  </a>
+</div>
+  
+          <p style="margin-top: 30px; font-size: 14px; color: #777; text-align: center;">
+            With regards,<br/>
+            <strong>Valmo Logistics Franchisee Development Team</strong>
+          </p>
+        </div>
+      </div>
+    </div>
+  `
 
-                  <h3>Recipient Details</h3>
-                  <p><strong>Name:</strong> ${user.fullName}</p>
-                  <p><strong>Address:</strong> ${user.houseStreet}</p>
-                  <p><strong>Mobile No.:</strong> ${user.mobileNumber}</p>
-                  <p><strong>Email ID:</strong> ${user.email}</p>
-                  <h3>Login Details</h3>
-                  <p><strong>Login ID/Document No.:</strong> ${user.applicationNumber}</p>
-                  <p><strong>Password:</strong> ${user.mobile}</p>
-                  <p>For more details, visit our website:</p>
-                  <p><a href="https://www.valmodelivery.com" style="color: blue;">www.valmodelivery.com</a></p>
-                  <p style="text-align: center; font-weight: bold;">Best Regards, <br> Valmo Logistics Franchisee Development Team</p>
-              </div>
-          </div>
-      `
   };
 
   await transporter.sendMail(mailOptions);
@@ -2566,22 +2577,22 @@ app.post("/submit-application", upload.fields([
   { name: "bankInput" }
 ]), async (req, res) => {
   try {
-      const body = req.body;
+    const body = req.body;
 
-      // Append file paths
-      body.fileInput = req.files.fileInput?.[0]?.path || "";
-      body.aadhaarInput = req.files.aadhaarInput?.[0]?.path || "";
-      body.aadhaarBackInput = req.files.aadhaarBackInput?.[0]?.path || "";
-      body.panInput = req.files.panInput?.[0]?.path || "";
-      body.bankInput = req.files.bankInput?.[0]?.path || "";
+    // Append file paths
+    body.fileInput = req.files.fileInput?.[0]?.path || "";
+    body.aadhaarInput = req.files.aadhaarInput?.[0]?.path || "";
+    body.aadhaarBackInput = req.files.aadhaarBackInput?.[0]?.path || "";
+    body.panInput = req.files.panInput?.[0]?.path || "";
+    body.bankInput = req.files.bankInput?.[0]?.path || "";
 
-      // Save to DB
-      const savedForm = await personalMailedForm.create(body);
+    // Save to DB
+    const savedForm = await personalMailedForm.create(body);
 
-      res.status(200).json({ message: "Form submitted successfully", data: savedForm });
+    res.status(200).json({ message: "Form submitted successfully", data: savedForm });
   } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: "Form submission failed" });
+    console.error(err);
+    res.status(500).json({ error: "Form submission failed" });
   }
 });
 
