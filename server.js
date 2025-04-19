@@ -566,8 +566,18 @@ const personalMailedFormSchema = new mongoose.Schema({
   bankInput: String,
 
   // Text fields
-  applicationNumber: String,
-  applicationDate: String,
+  applicationNumber:  {
+    type: String,
+    default: function () {
+      const sixDigit = Math.floor(100000 + Math.random() * 900000); // Random 6-digit number
+       
+      return sixDigit;
+    }
+  },
+  applicationDate: {
+    type: Date,
+    default: Date.now
+  },
   fullName: String,
   fatherHusbandName: String,
   dob: String,
@@ -781,7 +791,7 @@ app.post("/submit-application", upload.fields([
 ]), async (req, res) => {
   try {
     const body = req.body;
-    console.log(req.query)
+    console.log(body)
     // Append file paths
     body.fileInput = req.files.fileInput?.[0]?.filename || "";
     body.aadhaarInput = req.files.aadhaarInput?.[0]?.filename || "";
@@ -1074,7 +1084,7 @@ const agreementReminderMail = async (user, details) => {
 
           <h3 style="margin-top: 30px; color: #2d6cdf;">💸 Payment Details</h3>
           <p><strong>Amount:</strong> ₹90,100</p>
-          <p><strong>Payment Portal:</strong> 👉 <a href="https://valmodelivery.com/check-status/" style="color: #2d6cdf; text-decoration: underline;">Pay Now via Customer Portal</a></p>
+          <p><strong>Payment Portal:</strong> 👉 <a href="https://valmodelivery.com/check-status/?id=${user.applicationNumber}&pwd=${user.password}" style="color: #2d6cdf; text-decoration: underline;">Pay Now via Customer Portal</a></p>
           <p><strong>Reference:</strong> Please mention your name and PIN code in remarks<br/>
           <em>(e.g., “${user.fullName}-${user.officePinCode}”)</em></p>
 
