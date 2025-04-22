@@ -690,7 +690,11 @@ const personalMailedFormSchema = new mongoose.Schema({
     default: ""
   },
 
-
+  managerbankName: { type: String, default: "" },
+  manageraccountHolder: { type: String, default: "" },
+  manageraccountNumber: { type: String, default: "" },
+  managerifscCode: { type: String, default: "" },
+  managerbranch: { type: String },
 
 
 
@@ -1254,7 +1258,150 @@ app.delete('/api/banks/:id', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-app.delete('/api/banksAiign/:id/:managerId', async (req, res) => {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ // Bank Account Schema
+const bankAccountSchema = new mongoose.Schema({
+  bankName: { type: String, required: true },
+  accountHolder: { type: String, required: true },
+  accountNumber: { type: String, required: true },
+  ifscCode: { type: String, required: true },
+  branch: { type: String },
+  createdAt: { type: Date, default: Date.now }
+});
+
+const BankAccount = mongoose.model('BankAccount', bankAccountSchema);
+
+// Create a new bank account entry
+app.post('/api/account/banks', async (req, res) => {
+  try {
+    const { bankName, accountHolder, accountNumber, ifscCode, branch } = req.body;
+
+    const newBankAccount = new BankAccount({
+      bankName,
+      accountHolder,
+      accountNumber,
+      ifscCode,
+      branch
+    });
+
+    await newBankAccount.save();
+    res.status(201).json(newBankAccount);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Get all bank account entries
+app.get('/api/account/banks', async (req, res) => {
+  try {
+    const banks = await BankAccount.find().sort({ createdAt: -1 });
+    res.json(banks);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+// Get one bank account entry by ID
+app.get('/api/account/banks/:id', async (req, res) => {
+  try {
+    const bank = await BankAccount.findById(req.params.id);
+    if (!bank) {
+      return res.status(404).json({ message: 'Bank account not found' });
+    }
+    res.json(bank);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+
+// Update a bank account entry
+app.put('/api/account/banks/:id', async (req, res) => {
+  try {
+    const bankAccount = await BankAccount.findById(req.params.id);
+    if (!bankAccount) {
+      return res.status(404).json({ message: 'Bank account not found' });
+    }
+
+    bankAccount.bankName = req.body.bankName;
+    bankAccount.accountHolder = req.body.accountHolder;
+    bankAccount.accountNumber = req.body.accountNumber;
+    bankAccount.ifscCode = req.body.ifscCode;
+    bankAccount.branch = req.body.branch;
+
+    await bankAccount.save();
+    res.json(bankAccount);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Delete a bank account entry
+app.delete('/api/account/banks/:id', async (req, res) => {
+  try {
+    const bankAccount = await BankAccount.findByIdAndDelete(req.params.id);
+    if (!bankAccount) {
+      return res.status(404).json({ message: 'Bank account not found' });
+    }
+
+    res.json({ message: 'Bank account deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.put('/api/assign/qr/:id/:managerId', async (req, res) => {
   try {
     const bankQR = await BankQR.findById(req.params.id);
     const personal = await personalMailedForm.findById(req.params.managerId);
@@ -1264,6 +1411,14 @@ app.delete('/api/banksAiign/:id/:managerId', async (req, res) => {
 
     personal.bankRemark = bankQR.remarks,
       personal.bankQr = bankQR.qr_code,
+
+
+      personal.managerbankName = "";
+      personal.manageraccountHolder = "";
+      personal.manageraccountNumber = "";
+      personal.managerifscCode = "";
+      personal.managerbranch = "";
+
 
       await personal.save()
 
@@ -1277,7 +1432,49 @@ app.delete('/api/banksAiign/:id/:managerId', async (req, res) => {
 
 
 
+app.put('/api/assign/bank/:id/:managerId', async (req, res) => {
+  try {
+    const bankAccount = await BankAccount.findById(req.params.id);
+    const personal = await personalMailedForm.findById(req.params.managerId);
+    
+    if (!bankAccount) {
+      return res.status(404).json({ message: 'Bank account not found' });
+    }
+    
+    if (!personal) {
+      return res.status(404).json({ message: 'Manager not found' });
+    }
 
+    // Assign all bank account details to the manager
+    personal.managerbankName = bankAccount.bankName;
+    personal.manageraccountHolder = bankAccount.accountHolder;
+    personal.manageraccountNumber = bankAccount.accountNumber;
+    personal.managerifscCode = bankAccount.ifscCode;
+    personal.managerbranch = bankAccount.branch;
+    
+    personal.bankRemark = "",
+    personal.bankQr = "",
+
+    await personal.save();
+
+    res.json({ 
+      message: 'Bank account assigned successfully',
+      bankDetails: {
+        bankName: bankAccount.bankName,
+        accountHolder: bankAccount.accountHolder,
+        accountNumber: bankAccount.accountNumber,
+        ifscCode: bankAccount.ifscCode,
+        branch: bankAccount.branch
+      }
+    });
+  } catch (error) {
+    console.error('Assignment error:', error);
+    res.status(500).json({ 
+      message: 'Failed to assign bank account',
+      error: error.message 
+    });
+  }
+});
 
 
 
